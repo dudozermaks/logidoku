@@ -8,7 +8,7 @@ pub struct Figure {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct FigureNumberOutOfBoundError;
+pub struct FigureNumberOutOfBoundError;
 
 impl std::fmt::Display for FigureNumberOutOfBoundError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -19,7 +19,7 @@ impl std::fmt::Display for FigureNumberOutOfBoundError {
 impl std::error::Error for FigureNumberOutOfBoundError {}
 
 impl Figure {
-    fn row_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
+    pub fn row_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
         if n > 8 {
             return Err(FigureNumberOutOfBoundError);
         }
@@ -28,7 +28,7 @@ impl Figure {
             positions: BTreeSet::from_iter((0..9_usize).map(|i| i + n as usize * 9)),
         })
     }
-    fn col_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
+    pub fn col_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
         if n > 8 {
             return Err(FigureNumberOutOfBoundError);
         }
@@ -37,7 +37,7 @@ impl Figure {
             positions: BTreeSet::from_iter((0..9_usize).map(|i| i * 9 + n as usize)),
         })
     }
-    fn sqr_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
+    pub fn sqr_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
         if n > 8 {
             return Err(FigureNumberOutOfBoundError);
         }
@@ -52,6 +52,21 @@ impl Figure {
                 (i + a + b) as usize
             })),
         })
+    }
+
+    /// Panics if n > 9
+    pub fn row(n: u8) -> Figure {
+        Figure::row_checked(n).unwrap()
+    }
+
+    /// Panics if n > 9
+    pub fn col(n: u8) -> Figure {
+        Figure::col_checked(n).unwrap()
+    }
+
+    /// Panics if n > 9
+    pub fn sqr(n: u8) -> Figure {
+        Figure::sqr_checked(n).unwrap()
     }
 }
 
@@ -78,7 +93,7 @@ mod tests {
             }
         );
     }
-    
+
     #[test]
     fn col() {
         let second_col = Figure::col_checked(1).unwrap();
