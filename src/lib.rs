@@ -1,6 +1,7 @@
 pub mod grid;
 pub mod methods;
 pub mod cell;
+pub mod figure;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
