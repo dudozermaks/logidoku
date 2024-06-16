@@ -7,17 +7,6 @@ pub struct Figure {
     positions: BTreeSet<usize>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct FigureNumberOutOfBoundError;
-
-impl std::fmt::Display for FigureNumberOutOfBoundError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Figure number is out of bounds (0.=9)")
-    }
-}
-
-impl std::error::Error for FigureNumberOutOfBoundError {}
-
 impl Figure {
     pub fn row_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
         if n > 8 {
@@ -54,21 +43,58 @@ impl Figure {
         })
     }
 
-    /// Panics if n > 9
+    pub fn neighbours_checked(i: usize) -> Result<Figure, FigureNumberOutOfBoundError> {
+        if i >= 9 * 9 {
+            return Err(FigureNumberOutOfBoundError);
+        }
+        let row = i / 9;
+        let col = i % 9;
+        let sqr = (row / 3) * 3 + col / 3;
+
+        Ok(Figure::row(row as u8) + Figure::col(col as u8) + Figure::sqr(sqr as u8))
+    }
+
+    /// Panics if n > 8
     pub fn row(n: u8) -> Figure {
         Figure::row_checked(n).unwrap()
     }
 
-    /// Panics if n > 9
+    /// Panics if n > 8
     pub fn col(n: u8) -> Figure {
         Figure::col_checked(n).unwrap()
     }
 
-    /// Panics if n > 9
+    /// Panics if n > 8
     pub fn sqr(n: u8) -> Figure {
         Figure::sqr_checked(n).unwrap()
     }
+
+    /// Panics if n > 80
+    pub fn neighbours(i: usize) -> Figure {
+        Figure::neighbours_checked(i).unwrap()
+    }
 }
+
+impl std::ops::Add for Figure {
+    type Output = Self;
+
+    fn add(mut self, mut rhs: Self) -> Self::Output {
+        self.positions.append(&mut rhs.positions);
+
+        self
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct FigureNumberOutOfBoundError;
+
+impl std::fmt::Display for FigureNumberOutOfBoundError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Figure number is out of bounds (0.=9)")
+    }
+}
+
+impl std::error::Error for FigureNumberOutOfBoundError {}
 
 #[cfg(test)]
 mod tests {
@@ -76,8 +102,8 @@ mod tests {
 
     #[test]
     fn row() {
-        let second_row = Figure::row_checked(1).unwrap();
-        let ninth_row = Figure::row_checked(8).unwrap();
+        let second_row = Figure::row(1);
+        let ninth_row = Figure::row(8);
 
         assert_eq!(
             second_row,
@@ -96,8 +122,8 @@ mod tests {
 
     #[test]
     fn col() {
-        let second_col = Figure::col_checked(1).unwrap();
-        let ninth_col = Figure::col_checked(8).unwrap();
+        let second_col = Figure::col(1);
+        let ninth_col = Figure::col(8);
 
         assert_eq!(
             second_col,
@@ -116,8 +142,8 @@ mod tests {
 
     #[test]
     fn sqr() {
-        let second_sqr = Figure::sqr_checked(1).unwrap();
-        let ninth_sqr = Figure::sqr_checked(8).unwrap();
+        let second_sqr = Figure::sqr(1);
+        let ninth_sqr = Figure::sqr(8);
 
         assert_eq!(
             second_sqr,
@@ -135,9 +161,19 @@ mod tests {
     }
 
     #[test]
+    fn neighbours() {
+        let n1 = Figure::neighbours(2);
+        let n2 = Figure::neighbours(80);
+
+        assert_eq!(n1, Figure::row(0) + Figure::col(2) + Figure::sqr(0));
+        assert_eq!(n2, Figure::row(8) + Figure::col(8) + Figure::sqr(8));
+    }
+
+    #[test]
     fn checked_figures() {
         assert!(Figure::row_checked(9).is_err());
         assert!(Figure::col_checked(9).is_err());
         assert!(Figure::sqr_checked(9).is_err());
+        assert!(Figure::neighbours_checked(81).is_err());
     }
 }
