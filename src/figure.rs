@@ -73,6 +73,12 @@ impl Figure {
     pub fn neighbours(i: usize) -> Figure {
         Figure::neighbours_checked(i).unwrap()
     }
+
+    pub fn all() -> Figure {
+        Figure {
+            positions: BTreeSet::from_iter(0..81),
+        }
+    }
 }
 
 impl std::ops::Add for Figure {
@@ -82,6 +88,16 @@ impl std::ops::Add for Figure {
         self.positions.append(&mut rhs.positions);
 
         self
+    }
+}
+
+impl IntoIterator for Figure {
+    type Item = usize;
+
+    type IntoIter = std::collections::btree_set::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.positions.into_iter()
     }
 }
 
