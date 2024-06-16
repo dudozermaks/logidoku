@@ -1,6 +1,6 @@
-use std::{str::FromStr, array};
+use std::{array, str::FromStr};
 
-use crate::cell::Cell;
+use crate::{cell::Cell, figure::Figure};
 
 /// Grid represents 9 by 9 matrix of [Cells]
 #[derive(Debug, PartialEq)]
@@ -8,24 +8,21 @@ pub struct Grid {
     matrix: [Cell; 81],
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub enum ParseGridError {
-    InvalidSize,
-    InvalidCharacter(usize),
-}
+impl Grid {
+    pub fn updtae_cell_neighbours(&mut self, i: usize) {
+        let center_cell = self.matrix[i].clone();
 
-impl std::fmt::Display for ParseGridError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match *self {
-            ParseGridError::InvalidSize => write!(f, "Invalid Sudoku grid size"),
-            ParseGridError::InvalidCharacter(pos) => {
-                write!(f, "Invalid character at position: {}", pos)
+        if let Cell::Number(n) = center_cell {
+            for neighbour_pos in Figure::neighbours(i) {
+                let neighbour = &mut self.matrix[neighbour_pos];
+                match neighbour {
+                    Cell::Number(_) => (),
+                    Cell::Pencilmarks(p) => p.retain(|&x| x != n),
+                };
             }
         }
     }
 }
-
-impl std::error::Error for ParseGridError {}
 
 impl FromStr for Grid {
     type Err = ParseGridError;
@@ -50,9 +47,34 @@ impl FromStr for Grid {
             }
         }
 
-        Ok(Self { matrix })
+        let mut grid = Self { matrix };
+
+        for cell in Figure::all() {
+            grid.updtae_cell_neighbours(cell);
+        }
+
+        Ok(grid)
     }
 }
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum ParseGridError {
+    InvalidSize,
+    InvalidCharacter(usize),
+}
+
+impl std::fmt::Display for ParseGridError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match *self {
+            ParseGridError::InvalidSize => write!(f, "Invalid Sudoku grid size"),
+            ParseGridError::InvalidCharacter(pos) => {
+                write!(f, "Invalid character at position: {}", pos)
+            }
+        }
+    }
+}
+
+impl std::error::Error for ParseGridError {}
 
 #[cfg(test)]
 mod tests {
@@ -61,7 +83,7 @@ mod tests {
     #[test]
     fn init_string_size_is_too_small() {
         let grid = Grid::from_str(
-            "40100305000060508489540013603006040590005030005000128024050000700900050050009200",
+            "40100305000060508489540013603006040590005030005000120024050000700900050050009200",
         );
         assert_eq!(grid, Err(ParseGridError::InvalidSize));
     }
@@ -69,7 +91,7 @@ mod tests {
     #[test]
     fn init_string_size_is_too_big() {
         let grid = Grid::from_str(
-            "4010030500006050848954001360300604059000503000500012802405000070090005005000920001234",
+            "4010030500006050848954001360300604059000503000500012002405000070090005005000920001234",
         );
         assert_eq!(grid, Err(ParseGridError::InvalidSize));
     }
@@ -77,7 +99,7 @@ mod tests {
     #[test]
     fn init_string_chars_are_invalid() {
         let grid = Grid::from_str(
-            "4 1  3 5    6 5 848954  136 3  6 4 59   5 3   5   128 24 5    7  9   5  5   92   ",
+            "4 1  3 5    6 5 848954  136 3  6 4 59   5 3   5   120 24 5    7  9   5  5   92   ",
         );
         assert_eq!(grid, Err(ParseGridError::InvalidCharacter(1)));
     }
@@ -85,8 +107,19 @@ mod tests {
     #[test]
     fn init_string_is_ok() {
         let grid = Grid::from_str(
-            "401003050000605084895400136030060405900050300050001280240500007009000500500092000",
+            "401003050000605084895400136030060405900050300050001200240500007009000500500092000",
         );
         assert!(grid.is_ok());
+
+        let grid = grid.unwrap();
+
+        assert_eq!(grid.matrix[8], Cell::Pencilmarks([2, 9].to_vec()));
+        assert_eq!(grid.matrix[38], Cell::Pencilmarks([2, 4, 6, 7, 8].to_vec()));
+        assert_eq!(grid.matrix[80], Cell::Pencilmarks([1, 3, 8].to_vec()));
+
+        assert_eq!(grid.matrix[0], Cell::Number(4));
+        assert_eq!(grid.matrix[2], Cell::Number(1));
+        assert_eq!(grid.matrix[26], Cell::Number(6));
+        assert_eq!(grid.matrix[36], Cell::Number(9));
     }
 }
