@@ -1,4 +1,4 @@
-use std::{array, str::FromStr};
+use std::{array, ops::Index, str::FromStr};
 
 use crate::{cell::Cell, figure::Figure};
 
@@ -9,7 +9,7 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn updtae_cell_neighbours(&mut self, i: usize) {
+    fn updtae_cell_neighbours(&mut self, i: usize) {
         let center_cell = self.matrix[i].clone();
 
         if let Cell::Number(n) = center_cell {
@@ -21,6 +21,11 @@ impl Grid {
                 };
             }
         }
+    }
+
+    pub fn set_number(&mut self, i: usize, number: u8) {
+        self.matrix[i] = Cell::Number(number);
+        self.updtae_cell_neighbours(i);
     }
 }
 
@@ -54,6 +59,14 @@ impl FromStr for Grid {
         }
 
         Ok(grid)
+    }
+}
+
+impl Index<usize> for Grid {
+    type Output = Cell;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.matrix[index]
     }
 }
 

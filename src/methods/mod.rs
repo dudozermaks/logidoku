@@ -1,3 +1,5 @@
+pub mod naked_single;
+
 use crate::grid::Grid;
 
 /// Methods follow the definition from https://sudokuwiki.org, if it is avalible
