@@ -2,7 +2,7 @@ use crate::{cell::Cell, figure::Figure};
 
 use super::Method;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Ord, Eq, PartialOrd)]
 pub struct NakedSingle {
     i: usize,
 }
@@ -14,7 +14,7 @@ impl Method for NakedSingle {
     {
         let mut res = vec![];
 
-        for i in Figure::all() {
+        for i in Figure::all_cells() {
             if let Cell::Pencilmarks(pencilmarks) = &grid[i] {
                 if pencilmarks.len() == 1 {
                     res.push(NakedSingle { i })
@@ -53,10 +53,10 @@ mod tests {
         candidates[0].apply_to_grid(&mut grid);
         assert_eq!(grid[22], Cell::Number(2));
 
-        let candidates = NakedSingle::get_all_applications(&grid);
+        let mut candidates = NakedSingle::get_all_applications(&grid);
         assert_eq!(
-            candidates,
-            vec![NakedSingle { i: 4 }, NakedSingle { i: 13 }]
+            candidates.sort(),
+            vec![NakedSingle { i: 4 }, NakedSingle { i: 13 }].sort()
         );
     }
 }

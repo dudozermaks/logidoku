@@ -1,0 +1,127 @@
+use crate::figure::Figure;
+
+use super::Method;
+
+#[derive(Debug, PartialEq, PartialOrd, Eq, Ord)]
+pub struct HiddenSingle {
+    i: usize,
+    number_to_place: u8,
+}
+
+impl Method for HiddenSingle {
+    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self>
+    where
+        Self: Sized,
+    {
+        let mut res = vec![];
+
+        for f in Figure::all_figures() {
+            grid.pencilmarks_info(f)
+                .iter()
+                .filter_map(|(pencilmark, positions)| {
+                    if positions.len() == 1 {
+                        Some(HiddenSingle {
+                            i: positions[0],
+                            number_to_place: *pencilmark,
+                        })
+                    } else {
+                        None
+                    }
+                })
+                .for_each(|hs| res.push(hs));
+        }
+
+        res
+    }
+
+    fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
+        grid.set_number(self.i, self.number_to_place);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use crate::{
+        cell::Cell,
+        grid::Grid,
+        methods::{hidden_single::HiddenSingle, Method},
+    };
+
+    #[test]
+    fn get_and_apply() {
+        let mut grid = Grid::from_str(
+            "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
+        )
+        .unwrap();
+
+        let mut candidates = HiddenSingle::get_all_applications(&grid);
+        assert_eq!(
+            candidates.sort(),
+            vec![
+                HiddenSingle {
+                    i: 0,
+                    number_to_place: 7
+                },
+                HiddenSingle {
+                    i: 3,
+                    number_to_place: 1
+                },
+                HiddenSingle {
+                    i: 16,
+                    number_to_place: 1
+                },
+                HiddenSingle {
+                    i: 20,
+                    number_to_place: 8,
+                },
+                HiddenSingle {
+                    i: 26,
+                    number_to_place: 4
+                },
+                HiddenSingle {
+                    i: 36,
+                    number_to_place: 3
+                },
+                HiddenSingle {
+                    i: 44,
+                    number_to_place: 9
+                },
+                HiddenSingle {
+                    i: 54,
+                    number_to_place: 8
+                },
+                HiddenSingle {
+                    i: 59,
+                    number_to_place: 7
+                },
+                HiddenSingle {
+                    i: 60,
+                    number_to_place: 4
+                },
+                HiddenSingle {
+                    i: 80,
+                    number_to_place: 1
+                },
+            ]
+            .sort()
+        );
+
+        for candidate in candidates {
+            candidate.apply_to_grid(&mut grid);
+        }
+
+        assert_eq!(grid[0], Cell::Number(7));
+        assert_eq!(grid[3], Cell::Number(1));
+        assert_eq!(grid[16], Cell::Number(1));
+        assert_eq!(grid[20], Cell::Number(8));
+        assert_eq!(grid[26], Cell::Number(4));
+        assert_eq!(grid[36], Cell::Number(3));
+        assert_eq!(grid[44], Cell::Number(9));
+        assert_eq!(grid[54], Cell::Number(8));
+        assert_eq!(grid[59], Cell::Number(7));
+        assert_eq!(grid[60], Cell::Number(4));
+        assert_eq!(grid[80], Cell::Number(1));
+    }
+}

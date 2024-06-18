@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 /// Figure can be row, column, square, or some set of positions.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Figure {
     // Choose BTreeSet here because iterating over its elements is deterministic
     positions: BTreeSet<usize>,
@@ -74,10 +74,22 @@ impl Figure {
         Figure::neighbours_checked(i).unwrap()
     }
 
-    pub fn all() -> Figure {
+    pub fn all_cells() -> Figure {
         Figure {
             positions: BTreeSet::from_iter(0..81),
         }
+    }
+
+    pub fn all_figures() -> Vec<Figure> {
+        let mut res = vec![];
+
+        for i in 0..9 {
+            res.push(Figure::col(i));
+            res.push(Figure::row(i));
+            res.push(Figure::sqr(i));
+        }
+
+        res
     }
 }
 

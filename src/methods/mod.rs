@@ -1,4 +1,5 @@
 pub mod naked_single;
+pub mod hidden_single;
 
 use crate::grid::Grid;
 

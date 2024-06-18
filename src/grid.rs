@@ -1,4 +1,4 @@
-use std::{array, ops::Index, str::FromStr};
+use std::{array, collections::HashMap, ops::Index, str::FromStr};
 
 use crate::{cell::Cell, figure::Figure};
 
@@ -27,6 +27,25 @@ impl Grid {
         self.matrix[i] = Cell::Number(number);
         self.updtae_cell_neighbours(i);
     }
+
+    /// Returns map: number to cell in which it occurs.
+    pub fn pencilmarks_info(&self, figure: Figure) -> HashMap<u8, Vec<usize>> {
+        let mut res: HashMap<u8, Vec<usize>> = HashMap::new();
+
+        for i in figure {
+            if let Cell::Pencilmarks(pencilmarks) = &self[i] {
+                for pencilmark in pencilmarks {
+                    if let Some(info) = res.get_mut(pencilmark) {
+                        info.push(i);
+                    } else {
+                        res.insert(*pencilmark, vec![i]);
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
 }
 
 impl FromStr for Grid {
@@ -54,7 +73,7 @@ impl FromStr for Grid {
 
         let mut grid = Self { matrix };
 
-        for cell in Figure::all() {
+        for cell in Figure::all_cells() {
             grid.updtae_cell_neighbours(cell);
         }
 
