@@ -4,7 +4,7 @@ use super::Method;
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord)]
 pub struct HiddenSingle {
-    i: usize,
+    position: usize,
     number_to_place: u8,
 }
 
@@ -21,7 +21,7 @@ impl Method for HiddenSingle {
                 .filter_map(|(pencilmark, positions)| {
                     if positions.len() == 1 {
                         Some(HiddenSingle {
-                            i: positions[0],
+                            position: positions[0],
                             number_to_place: *pencilmark,
                         })
                     } else {
@@ -35,7 +35,7 @@ impl Method for HiddenSingle {
     }
 
     fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
-        grid.set_number(self.i, self.number_to_place);
+        grid.set_number(self.position, self.number_to_place);
     }
 }
 
@@ -61,47 +61,47 @@ mod tests {
             candidates.sort(),
             vec![
                 HiddenSingle {
-                    i: 0,
+                    position: 0,
                     number_to_place: 7
                 },
                 HiddenSingle {
-                    i: 3,
+                    position: 3,
                     number_to_place: 1
                 },
                 HiddenSingle {
-                    i: 16,
+                    position: 16,
                     number_to_place: 1
                 },
                 HiddenSingle {
-                    i: 20,
+                    position: 20,
                     number_to_place: 8,
                 },
                 HiddenSingle {
-                    i: 26,
+                    position: 26,
                     number_to_place: 4
                 },
                 HiddenSingle {
-                    i: 36,
+                    position: 36,
                     number_to_place: 3
                 },
                 HiddenSingle {
-                    i: 44,
+                    position: 44,
                     number_to_place: 9
                 },
                 HiddenSingle {
-                    i: 54,
+                    position: 54,
                     number_to_place: 8
                 },
                 HiddenSingle {
-                    i: 59,
+                    position: 59,
                     number_to_place: 7
                 },
                 HiddenSingle {
-                    i: 60,
+                    position: 60,
                     number_to_place: 4
                 },
                 HiddenSingle {
-                    i: 80,
+                    position: 80,
                     number_to_place: 1
                 },
             ]

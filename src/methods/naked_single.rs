@@ -4,7 +4,7 @@ use super::Method;
 
 #[derive(Debug, PartialEq, Ord, Eq, PartialOrd)]
 pub struct NakedSingle {
-    i: usize,
+    position: usize,
 }
 
 impl Method for NakedSingle {
@@ -17,7 +17,7 @@ impl Method for NakedSingle {
         for i in Figure::all_cells() {
             if let Cell::Pencilmarks(pencilmarks) = &grid[i] {
                 if pencilmarks.len() == 1 {
-                    res.push(NakedSingle { i })
+                    res.push(NakedSingle { position: i })
                 }
             }
         }
@@ -26,9 +26,9 @@ impl Method for NakedSingle {
     }
 
     fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
-        let number_to_set = grid[self.i].pencilmarks()[0];
+        let number_to_set = grid[self.position].pencilmarks()[0];
 
-        grid.set_number(self.i, number_to_set);
+        grid.set_number(self.position, number_to_set);
     }
 }
 
@@ -48,7 +48,7 @@ mod tests {
         .unwrap();
 
         let candidates = NakedSingle::get_all_applications(&grid);
-        assert_eq!(candidates, vec![NakedSingle { i: 22 }]);
+        assert_eq!(candidates, vec![NakedSingle { position: 22 }]);
 
         candidates[0].apply_to_grid(&mut grid);
         assert_eq!(grid[22], Cell::Number(2));
@@ -56,7 +56,7 @@ mod tests {
         let mut candidates = NakedSingle::get_all_applications(&grid);
         assert_eq!(
             candidates.sort(),
-            vec![NakedSingle { i: 4 }, NakedSingle { i: 13 }].sort()
+            vec![NakedSingle { position: 4 }, NakedSingle { position: 13 }].sort()
         );
     }
 }
