@@ -7,7 +7,10 @@ pub struct HiddenSingleCreator {}
 impl MethodCreator for HiddenSingleCreator {
     type Method = HiddenSingle;
 
-    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self::Method> where Self::Method: Method {
+    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self::Method>
+    where
+        Self::Method: Method,
+    {
         let mut res = vec![];
 
         for f in Figure::all_figures() {
@@ -37,7 +40,6 @@ pub struct HiddenSingle {
 }
 
 impl Method for HiddenSingle {
-
     fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
         grid.set_number(self.position, self.number_to_place);
     }
@@ -50,7 +52,10 @@ mod tests {
     use crate::{
         cell::Cell,
         grid::Grid,
-        methods::{hidden_single::{HiddenSingle, HiddenSingleCreator}, Method, MethodCreator},
+        methods::{
+            hidden_single::{HiddenSingle, HiddenSingleCreator},
+            Method, MethodCreator,
+        },
     };
 
     #[test]

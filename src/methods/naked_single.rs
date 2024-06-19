@@ -2,13 +2,15 @@ use crate::{cell::Cell, figure::Figure};
 
 use super::{Method, MethodCreator};
 
-pub struct NakedSingleCreator {
-
-}
+pub struct NakedSingleCreator {}
 
 impl MethodCreator for NakedSingleCreator {
     type Method = NakedSingle;
-    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self::Method> where Self::Method: Method {
+
+    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self::Method>
+    where
+        Self::Method: Method,
+    {
         let mut res = vec![];
 
         for i in Figure::all_cells() {
