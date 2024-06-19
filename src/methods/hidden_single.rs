@@ -7,7 +7,7 @@ pub struct HiddenSingleCreator {}
 impl MethodCreator for HiddenSingleCreator {
     type Method = HiddenSingle;
 
-    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self::Method>
+    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Self::Method>
     where
         Self::Method: Method,
     {
@@ -65,7 +65,7 @@ mod tests {
         )
         .unwrap();
 
-        let mut candidates = HiddenSingleCreator::get_all_applications(&grid);
+        let mut candidates = HiddenSingleCreator{}.get_all_applications(&grid);
         assert_eq!(
             candidates.sort(),
             vec![

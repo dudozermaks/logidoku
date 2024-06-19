@@ -7,7 +7,7 @@ pub struct NakedSingleCreator {}
 impl MethodCreator for NakedSingleCreator {
     type Method = NakedSingle;
 
-    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self::Method>
+    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Self::Method>
     where
         Self::Method: Method,
     {
@@ -53,13 +53,13 @@ mod tests {
         )
         .unwrap();
 
-        let candidates = NakedSingleCreator::get_all_applications(&grid);
+        let candidates = NakedSingleCreator{}.get_all_applications(&grid);
         assert_eq!(candidates, vec![NakedSingle { position: 22 }]);
 
         candidates[0].apply_to_grid(&mut grid);
         assert_eq!(grid[22], Cell::Number(2));
 
-        let mut candidates = NakedSingleCreator::get_all_applications(&grid);
+        let mut candidates = NakedSingleCreator{}.get_all_applications(&grid);
         assert_eq!(
             candidates.sort(),
             vec![NakedSingle { position: 4 }, NakedSingle { position: 13 }].sort()
