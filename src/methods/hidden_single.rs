@@ -1,18 +1,13 @@
 use crate::figure::Figure;
 
-use super::Method;
+use super::{Method, MethodCreator};
 
-#[derive(Debug, PartialEq, PartialOrd, Eq, Ord)]
-pub struct HiddenSingle {
-    position: usize,
-    number_to_place: u8,
-}
+pub struct HiddenSingleCreator {}
 
-impl Method for HiddenSingle {
-    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self>
-    where
-        Self: Sized,
-    {
+impl MethodCreator for HiddenSingleCreator {
+    type Method = HiddenSingle;
+
+    fn get_all_applications(grid: &crate::grid::Grid) -> Vec<Self::Method> where Self::Method: Method {
         let mut res = vec![];
 
         for f in Figure::all_figures() {
@@ -33,6 +28,15 @@ impl Method for HiddenSingle {
 
         res
     }
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Eq, Ord)]
+pub struct HiddenSingle {
+    position: usize,
+    number_to_place: u8,
+}
+
+impl Method for HiddenSingle {
 
     fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
         grid.set_number(self.position, self.number_to_place);
@@ -46,7 +50,7 @@ mod tests {
     use crate::{
         cell::Cell,
         grid::Grid,
-        methods::{hidden_single::HiddenSingle, Method},
+        methods::{hidden_single::{HiddenSingle, HiddenSingleCreator}, Method, MethodCreator},
     };
 
     #[test]
@@ -56,7 +60,7 @@ mod tests {
         )
         .unwrap();
 
-        let mut candidates = HiddenSingle::get_all_applications(&grid);
+        let mut candidates = HiddenSingleCreator::get_all_applications(&grid);
         assert_eq!(
             candidates.sort(),
             vec![
