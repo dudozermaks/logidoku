@@ -1,28 +1,28 @@
 use std::collections::HashSet;
 
-use crate::{cell::Cell, figure::Figure};
+use crate::{action::Action, cell::Cell, figure::Figure};
 
-use super::{Method, MethodCreator};
+use super::MethodCreator;
 
 pub struct NakedNCreator {
     n: u8,
 }
 
 impl NakedNCreator {
-    fn get_single_applications(&self, grid: &crate::grid::Grid) -> Vec<Naked> {
+    fn get_single_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         let mut res = vec![];
 
         for i in Figure::all_cells() {
             if let Cell::Pencilmarks(pencilmarks) = &grid[i] {
                 if pencilmarks.len() == 1 {
-                    res.push(Naked::Single(i))
+                    res.push(Action::PlaceNumber(i, pencilmarks[0]))
                 }
             }
         }
 
         res
     }
-    fn get_multiple_applications(&self, grid: &crate::grid::Grid) -> Vec<Naked> {
+    fn get_multiple_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         let mut res = vec![];
 
         for f in Figure::all_figures() {
@@ -53,7 +53,7 @@ impl NakedNCreator {
                 }
 
                 if possible_positions.len() == self.n.into() {
-                    res.push(Naked::N(
+                    res.push(Action::RemovePencilmarks(
                         f.clone() - possible_positions.clone().into(),
                         lead_set.to_vec(),
                     ));
@@ -65,37 +65,12 @@ impl NakedNCreator {
 }
 
 impl MethodCreator for NakedNCreator {
-    type Method = Naked;
-
-    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Self::Method>
-    where
-        Self::Method: Method,
-    {
+    // type Method = Naked;
+    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         if self.n == 1 {
             self.get_single_applications(grid)
         } else {
             self.get_multiple_applications(grid)
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Ord, Eq, PartialOrd)]
-pub enum Naked {
-    Single(usize),
-    N(Figure, Vec<u8>),
-}
-
-impl Method for Naked {
-    fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
-        match self {
-            Naked::Single(position) => {
-                let number_to_set = grid[*position].pencilmarks()[0];
-
-                grid.set_number(*position, number_to_set);
-            }
-            Naked::N(figure, pencilmarks_to_remove) => {
-                grid.remove_pencilmarks(figure, pencilmarks_to_remove)
-            }
         }
     }
 }
@@ -117,7 +92,7 @@ mod tests {
         .unwrap();
 
         let candidates = NakedNCreator { n: 1 }.get_all_applications(&grid);
-        assert_eq!(candidates, vec![Naked::Single(22)]);
+        assert_eq!(candidates, vec![Action::PlaceNumber(22, 2)]);
 
         candidates[0].apply_to_grid(&mut grid);
         assert_eq!(grid[22], Cell::Number(2));
@@ -125,7 +100,7 @@ mod tests {
         let mut candidates = NakedNCreator { n: 1 }.get_all_applications(&grid);
         assert_eq!(
             candidates.sort(),
-            vec![Naked::Single(4), Naked::Single(13)].sort()
+            vec![Action::PlaceNumber(4, 8), Action::PlaceNumber(13, 1)].sort()
         );
     }
 
@@ -140,14 +115,14 @@ mod tests {
         assert_eq!(
             candidates,
             vec![
-                Naked::N(vec![0, 3, 4, 5, 6, 7, 8].into(), vec![1, 6]),
-                Naked::N(vec![0, 9, 10, 11, 18, 19, 20].into(), vec![1, 6]),
-                Naked::N(vec![18, 19, 20, 21, 22, 24, 25].into(), vec![6, 7]),
-                Naked::N(vec![27, 28, 36, 37, 38, 45, 47].into(), vec![1, 8]),
-                Naked::N(vec![36, 37, 38, 41, 42, 43, 44].into(), vec![4, 8]),
-                Naked::N(vec![30, 31, 32, 41, 48, 49, 50].into(), vec![4, 8]),
-                Naked::N(vec![34, 35, 42, 43, 44, 52, 53].into(), vec![5, 8]),
-                Naked::N(vec![6, 15, 24, 42, 60, 69, 78].into(), vec![5, 8])
+                Action::RemovePencilmarks(vec![0, 3, 4, 5, 6, 7, 8].into(), vec![1, 6]),
+                Action::RemovePencilmarks(vec![0, 9, 10, 11, 18, 19, 20].into(), vec![1, 6]),
+                Action::RemovePencilmarks(vec![18, 19, 20, 21, 22, 24, 25].into(), vec![6, 7]),
+                Action::RemovePencilmarks(vec![27, 28, 36, 37, 38, 45, 47].into(), vec![1, 8]),
+                Action::RemovePencilmarks(vec![36, 37, 38, 41, 42, 43, 44].into(), vec![4, 8]),
+                Action::RemovePencilmarks(vec![30, 31, 32, 41, 48, 49, 50].into(), vec![4, 8]),
+                Action::RemovePencilmarks(vec![34, 35, 42, 43, 44, 52, 53].into(), vec![5, 8]),
+                Action::RemovePencilmarks(vec![6, 15, 24, 42, 60, 69, 78].into(), vec![5, 8])
             ]
         );
 
@@ -177,12 +152,12 @@ mod tests {
         assert_eq!(
             candidates,
             vec![
-                Naked::N(vec![0, 9, 18, 54, 63, 72].into(), vec![1, 5, 8]),
-                Naked::N(vec![28, 29, 37, 38, 46, 47].into(), vec![1, 5, 8]),
-                Naked::N(vec![33, 34, 42, 43, 51, 52].into(), vec![2, 3, 8]),
-                Naked::N(vec![54, 55, 57, 58, 59, 62].into(), vec![2, 8, 9]),
-                Naked::N(vec![54, 55, 63, 72, 73, 74].into(), vec![2, 6, 8]),
-                Naked::N(vec![8, 17, 26, 62, 71, 80].into(), vec![2, 3, 8])
+                Action::RemovePencilmarks(vec![0, 9, 18, 54, 63, 72].into(), vec![1, 5, 8]),
+                Action::RemovePencilmarks(vec![28, 29, 37, 38, 46, 47].into(), vec![1, 5, 8]),
+                Action::RemovePencilmarks(vec![33, 34, 42, 43, 51, 52].into(), vec![2, 3, 8]),
+                Action::RemovePencilmarks(vec![54, 55, 57, 58, 59, 62].into(), vec![2, 8, 9]),
+                Action::RemovePencilmarks(vec![54, 55, 63, 72, 73, 74].into(), vec![2, 6, 8]),
+                Action::RemovePencilmarks(vec![8, 17, 26, 62, 71, 80].into(), vec![2, 3, 8])
             ]
         );
 
@@ -209,8 +184,8 @@ mod tests {
         assert_eq!(
             candidates,
             vec![
-                Naked::N(vec![27, 36, 45, 54, 72].into(), vec![1, 5, 6, 8]),
-                Naked::N(vec![1, 2, 11, 19, 20].into(), vec![1, 5, 6, 8]),
+                Action::RemovePencilmarks(vec![27, 36, 45, 54, 72].into(), vec![1, 5, 6, 8]),
+                Action::RemovePencilmarks(vec![1, 2, 11, 19, 20].into(), vec![1, 5, 6, 8]),
             ]
         );
 

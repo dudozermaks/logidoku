@@ -1,16 +1,11 @@
-use crate::figure::Figure;
+use crate::{action::Action, figure::Figure};
 
-use super::{Method, MethodCreator};
+use super::MethodCreator;
 
 pub struct HiddenSingleCreator {}
 
 impl MethodCreator for HiddenSingleCreator {
-    type Method = HiddenSingle;
-
-    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Self::Method>
-    where
-        Self::Method: Method,
-    {
+    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         let mut res = vec![];
 
         for f in Figure::all_figures() {
@@ -18,10 +13,7 @@ impl MethodCreator for HiddenSingleCreator {
                 .iter()
                 .filter_map(|(pencilmark, positions)| {
                     if positions.len() == 1 {
-                        Some(HiddenSingle {
-                            position: positions[0],
-                            number_to_place: *pencilmark,
-                        })
+                        Some(Action::PlaceNumber(positions[0], *pencilmark))
                     } else {
                         None
                     }
@@ -33,29 +25,15 @@ impl MethodCreator for HiddenSingleCreator {
     }
 }
 
-#[derive(Debug, PartialEq, PartialOrd, Eq, Ord)]
-pub struct HiddenSingle {
-    position: usize,
-    number_to_place: u8,
-}
-
-impl Method for HiddenSingle {
-    fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
-        grid.set_number(self.position, self.number_to_place);
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
 
     use crate::{
+        action::Action,
         cell::Cell,
         grid::Grid,
-        methods::{
-            hidden_single::{HiddenSingle, HiddenSingleCreator},
-            Method, MethodCreator,
-        },
+        methods::{hidden_single::HiddenSingleCreator, MethodCreator},
     };
 
     #[test]
@@ -65,54 +43,21 @@ mod tests {
         )
         .unwrap();
 
-        let mut candidates = HiddenSingleCreator{}.get_all_applications(&grid);
+        let mut candidates = HiddenSingleCreator {}.get_all_applications(&grid);
         assert_eq!(
             candidates.sort(),
             vec![
-                HiddenSingle {
-                    position: 0,
-                    number_to_place: 7
-                },
-                HiddenSingle {
-                    position: 3,
-                    number_to_place: 1
-                },
-                HiddenSingle {
-                    position: 16,
-                    number_to_place: 1
-                },
-                HiddenSingle {
-                    position: 20,
-                    number_to_place: 8,
-                },
-                HiddenSingle {
-                    position: 26,
-                    number_to_place: 4
-                },
-                HiddenSingle {
-                    position: 36,
-                    number_to_place: 3
-                },
-                HiddenSingle {
-                    position: 44,
-                    number_to_place: 9
-                },
-                HiddenSingle {
-                    position: 54,
-                    number_to_place: 8
-                },
-                HiddenSingle {
-                    position: 59,
-                    number_to_place: 7
-                },
-                HiddenSingle {
-                    position: 60,
-                    number_to_place: 4
-                },
-                HiddenSingle {
-                    position: 80,
-                    number_to_place: 1
-                },
+                Action::PlaceNumber(0, 7),
+                Action::PlaceNumber(3, 1),
+                Action::PlaceNumber(16, 1),
+                Action::PlaceNumber(20, 8,),
+                Action::PlaceNumber(26, 4),
+                Action::PlaceNumber(36, 3),
+                Action::PlaceNumber(44, 9),
+                Action::PlaceNumber(54, 8),
+                Action::PlaceNumber(59, 7),
+                Action::PlaceNumber(60, 4),
+                Action::PlaceNumber(80, 1),
             ]
             .sort()
         );
