@@ -1,7 +1,7 @@
-use std::collections::BTreeSet;
+use std::{collections::BTreeSet, ops::Sub};
 
 /// Figure can be row, column, square, or some set of positions.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, PartialOrd, Eq, Ord)]
 pub struct Figure {
     // Choose BTreeSet here because iterating over its elements is deterministic
     positions: BTreeSet<usize>,
@@ -110,6 +110,24 @@ impl IntoIterator for Figure {
 
     fn into_iter(self) -> Self::IntoIter {
         self.positions.into_iter()
+    }
+}
+
+impl From<Vec<usize>> for Figure {
+    fn from(value: Vec<usize>) -> Self {
+        Figure {
+            positions: BTreeSet::from_iter(value.into_iter()),
+        }
+    }
+}
+
+impl Sub for Figure {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Figure {
+            positions: self.positions.difference(&rhs.positions).cloned().collect(),
+        }
     }
 }
 

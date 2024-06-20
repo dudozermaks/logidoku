@@ -23,11 +23,28 @@ impl Grid {
         }
     }
 
+    // TODO: Test
     pub fn set_number(&mut self, i: usize, number: u8) {
         self.matrix[i] = Cell::Number(number);
         self.updtae_cell_neighbours(i);
     }
 
+    // TODO: Test
+    pub fn remove_pencilmarks(&mut self, figure: &Figure, pencilmarks_to_remove: &Vec<u8>) {
+        for i in figure.clone() {
+            if let Cell::Pencilmarks(pencilmarks) = &self[i] {
+                let new_pencilmarks = pencilmarks
+                    .into_iter()
+                    .filter(|p| !pencilmarks_to_remove.contains(&p))
+                    .cloned()
+                    .collect();
+
+                self.matrix[i] = Cell::Pencilmarks(new_pencilmarks);
+            }
+        }
+    }
+
+    // TODO: Test
     /// Returns map: number to cell in which it occurs.
     pub fn pencilmarks_info(&self, figure: Figure) -> HashMap<u8, Vec<usize>> {
         let mut res: HashMap<u8, Vec<usize>> = HashMap::new();
