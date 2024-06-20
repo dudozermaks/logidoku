@@ -2,7 +2,11 @@ use crate::figure::Figure;
 
 #[derive(Ord, Eq, PartialEq, PartialOrd, Debug)]
 pub enum Action {
+    /// 1. Position
+    /// 2. Number
     PlaceNumber(usize, u8),
+    /// 1. Figure to remove from
+    /// 2. Pencilmarks to remove
     RemovePencilmarks(Figure, Vec<u8>),
 }
 
