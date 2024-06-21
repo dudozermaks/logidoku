@@ -1,9 +1,9 @@
-pub mod hidden_single;
+pub mod hidden_n;
 pub mod naked_n;
 
 use std::str::FromStr;
 
-use crate::{action::Action, grid::Grid, cell::Cell};
+use crate::{action::Action, grid::Grid};
 
 /// Methods follow the definition from https://sudokuwiki.org, if it is avalible
 /// for the given method.

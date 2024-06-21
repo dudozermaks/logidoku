@@ -1,4 +1,4 @@
-use std::{array, collections::HashMap, ops::Index, str::FromStr};
+use std::{array, collections::HashMap, ops::{Index, IndexMut}, str::FromStr};
 
 use crate::{cell::Cell, figure::Figure};
 
@@ -9,6 +9,7 @@ pub struct Grid {
 }
 
 impl Grid {
+    // TODO: Test
     fn updtae_cell_neighbours(&mut self, i: usize) {
         let center_cell = self.matrix[i].clone();
 
@@ -30,18 +31,8 @@ impl Grid {
     }
 
     // TODO: Test
-    pub fn remove_pencilmarks(&mut self, figure: &Figure, pencilmarks_to_remove: &Vec<u8>) {
-        for i in figure.clone() {
-            if let Cell::Pencilmarks(pencilmarks) = &self[i] {
-                let new_pencilmarks = pencilmarks
-                    .into_iter()
-                    .filter(|p| !pencilmarks_to_remove.contains(&p))
-                    .cloned()
-                    .collect();
-
-                self.matrix[i] = Cell::Pencilmarks(new_pencilmarks);
-            }
-        }
+    pub fn set_pencilmarks(&mut self, i: usize, pencilmarks: Vec<u8>) {
+        self.matrix[i] = Cell::Pencilmarks(pencilmarks);
     }
 
     // TODO: Test
