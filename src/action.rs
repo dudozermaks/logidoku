@@ -10,6 +10,7 @@ pub enum Action {
     RemovePencilmarks(Figure, Vec<u8>),
 }
 
+// TODO: Test
 impl Action {
     pub fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
         match self {
