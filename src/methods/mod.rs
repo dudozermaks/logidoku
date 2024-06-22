@@ -1,3 +1,4 @@
+pub mod box_line_reduction;
 pub mod hidden_n;
 pub mod naked_n;
 pub mod pointing_ns;
@@ -12,11 +13,11 @@ pub trait MethodCreator {
     fn get_all_applications(&self, grid: &Grid) -> Vec<Action>;
 }
 
-fn test_method<T: MethodCreator>(
-    grid: &str,
-    creator: T,
-    mut valid_candidates: Vec<Action>,
-) {
+// This is used for internal testing of the methods.
+// Rust does not mark functions used in tests as used,
+// so disable the warning
+#[allow(dead_code)]
+fn test_method<T: MethodCreator>(grid: &str, creator: T, mut valid_candidates: Vec<Action>) {
     let grid = Grid::from_str(grid).unwrap();
 
     let mut candidates = creator.get_all_applications(&grid);

@@ -22,6 +22,9 @@ impl MethodCreator for PointingNsCreator {
 
                     if self.n == 2 {
                         let current_diff = positions[1] - positions[0];
+
+                        // if difference is 1 or 2, cells are on the same row
+                        // if difference is 9 or 18, cells are on the same column
                         if [1, 2, 9, 18].contains(&current_diff) {
                             diff = Some(current_diff);
                         }
@@ -36,7 +39,6 @@ impl MethodCreator for PointingNsCreator {
 
                     if let Some(diff) = diff {
                         let is_row: bool = diff == 1 || diff == 2;
-                        println!("{}", is_row);
 
                         let figure = if is_row {
                             Figure::row(Figure::row_of(positions[0]))
