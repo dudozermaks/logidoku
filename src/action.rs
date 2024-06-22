@@ -14,6 +14,7 @@ pub enum Action {
 }
 
 // TODO: Test
+// TODO: add method like: is_useful(&grid)
 impl Action {
     fn remove_or_preserve_pencilmarks(
         grid: &mut crate::grid::Grid,

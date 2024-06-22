@@ -7,6 +7,7 @@ pub struct Figure {
     positions: BTreeSet<usize>,
 }
 
+// TODO: test untested methods
 impl Figure {
     pub fn row_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
         if n > 8 {
@@ -128,6 +129,63 @@ impl Figure {
     /// Panics if i > 80
     pub fn sqr_of(i: usize) -> u8 {
         Figure::sqr_of_checked(i).unwrap()
+    }
+
+    // Returns `Some(row_number)` if all positions lay on the same row
+    // Returns `None` otherwise
+    // Panics if some of the cells are out of bounds of grid (> 80)
+    pub fn is_on_the_same_row(&self) -> Option<u8> {
+        let mut res = None;
+
+        for i in self.clone() {
+            let row = Figure::row_of(i);
+
+            if res.is_none() {
+                res = Some(row);
+            } else if Some(row) != res {
+                return None;
+            }
+        }
+
+        res
+    }
+
+    // Returns `Some(col_number)` if all positions lay on the same col
+    // Returns `None` otherwise
+    // Panics if some of the cells are out of bounds of grid (> 80)
+    pub fn is_on_the_same_col(&self) -> Option<u8> {
+        let mut res = None;
+
+        for i in self.clone() {
+            let col = Figure::col_of(i);
+
+            if res.is_none() {
+                res = Some(col);
+            } else if Some(col) != res {
+                return None;
+            }
+        }
+
+        res
+    }
+
+    // Returns `Some(sqr_number)` if all positions lay on the same sqr
+    // Returns `None` otherwise
+    // Panics if some of the cells are out of bounds of grid (> 80)
+    pub fn is_on_the_same_sqr(&self) -> Option<u8> {
+        let mut res = None;
+
+        for i in self.clone() {
+            let sqr = Figure::sqr_of(i);
+
+            if res.is_none() {
+                res = Some(sqr);
+            } else if Some(sqr) != res {
+                return None;
+            }
+        }
+
+        res
     }
 }
 
