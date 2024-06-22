@@ -1,5 +1,6 @@
 pub mod hidden_n;
 pub mod naked_n;
+pub mod pointing_ns;
 
 use std::str::FromStr;
 
