@@ -2,9 +2,11 @@ use std::collections::HashSet;
 
 use crate::{action::Action, cell::Cell, figure::Figure};
 
+// TODO: rename to Method
 use super::MethodCreator;
 
 pub struct NakedNCreator {
+    // TODO: change all of that to enums
     n: u8,
 }
 
