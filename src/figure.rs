@@ -43,13 +43,13 @@ impl Figure {
         })
     }
 
-    pub fn neighbours_checked(i: usize) -> Result<Figure, FigureNumberOutOfBoundError> {
+    pub fn neighbours_checked(i: usize) -> Result<Figure, CellIndexOutOfBoundError> {
         if i >= 9 * 9 {
-            return Err(FigureNumberOutOfBoundError);
+            return Err(CellIndexOutOfBoundError);
         }
-        let row = i / 9;
-        let col = i % 9;
-        let sqr = (row / 3) * 3 + col / 3;
+        let row = Self::row_of(i);
+        let col = Self::col_of(i);
+        let sqr = Self::sqr_of(i);
 
         Ok(Figure::row(row as u8) + Figure::col(col as u8) + Figure::sqr(sqr as u8))
     }
@@ -69,7 +69,7 @@ impl Figure {
         Figure::sqr_checked(n).unwrap()
     }
 
-    /// Panics if n > 80
+    /// Panics if i > 80
     pub fn neighbours(i: usize) -> Figure {
         Figure::neighbours_checked(i).unwrap()
     }
@@ -90,6 +90,44 @@ impl Figure {
         }
 
         res
+    }
+    pub fn row_of_checked(i: usize) -> Result<u8, CellIndexOutOfBoundError> {
+        if i >= 9 * 9 {
+            return Err(CellIndexOutOfBoundError);
+        }
+
+        Ok((i / 9) as u8)
+    }
+
+    pub fn col_of_checked(i: usize) -> Result<u8, CellIndexOutOfBoundError> {
+        if i >= 9 * 9 {
+            return Err(CellIndexOutOfBoundError);
+        }
+
+        Ok((i % 9) as u8)
+    }
+
+    pub fn sqr_of_checked(i: usize) -> Result<u8, CellIndexOutOfBoundError> {
+        if i >= 9 * 9 {
+            return Err(CellIndexOutOfBoundError);
+        }
+
+        Ok((Self::row_of(i) / 3) * 3 + Self::col_of(i) / 3)
+    }
+
+    /// Panics if i > 80
+    pub fn row_of(i: usize) -> u8 {
+        Figure::row_of_checked(i).unwrap()
+    }
+
+    /// Panics if i > 80
+    pub fn col_of(i: usize) -> u8 {
+        Figure::col_of_checked(i).unwrap()
+    }
+
+    /// Panics if i > 80
+    pub fn sqr_of(i: usize) -> u8 {
+        Figure::sqr_of_checked(i).unwrap()
     }
 }
 
@@ -136,11 +174,22 @@ pub struct FigureNumberOutOfBoundError;
 
 impl std::fmt::Display for FigureNumberOutOfBoundError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Figure number is out of bounds (0.=9)")
+        write!(f, "Figure number is out of bounds (0..9)")
     }
 }
 
 impl std::error::Error for FigureNumberOutOfBoundError {}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct CellIndexOutOfBoundError;
+
+impl std::fmt::Display for CellIndexOutOfBoundError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Cell index is out of bounds (0..81)")
+    }
+}
+
+impl std::error::Error for CellIndexOutOfBoundError {}
 
 #[cfg(test)]
 mod tests {
