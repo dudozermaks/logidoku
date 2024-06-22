@@ -14,42 +14,25 @@ impl MethodCreator for PointingNsCreator {
             let sqr = Figure::sqr(sqr_number);
             let pencilmarks_info = grid.pencilmarks_info(sqr);
 
-            for (pencilmark, mut positions) in pencilmarks_info {
+            for (pencilmark, positions) in pencilmarks_info {
                 if positions.len() == self.n.into() {
-                    positions.sort();
+                    let pencilmarks_figure: Figure = positions.into();
 
-                    let mut diff: Option<usize> = None;
+                    let on_same_row = pencilmarks_figure.is_on_the_same_row();
+                    let on_same_col = pencilmarks_figure.is_on_the_same_col();
 
-                    if self.n == 2 {
-                        let current_diff = positions[1] - positions[0];
+                    let mut figures_to_add = vec![];
 
-                        // if difference is 1 or 2, cells are on the same row
-                        // if difference is 9 or 18, cells are on the same column
-                        if [1, 2, 9, 18].contains(&current_diff) {
-                            diff = Some(current_diff);
-                        }
-                    } else if self.n == 3 {
-                        let diff1 = positions[1] - positions[0];
-                        let diff2 = positions[2] - positions[1];
-
-                        if diff1 == diff2 && [1, 9].contains(&diff1) {
-                            diff = Some(diff1);
-                        }
+                    if let Some(row) = on_same_row {
+                        figures_to_add.push(Figure::row(row) - pencilmarks_figure.clone())
                     }
 
-                    if let Some(diff) = diff {
-                        let is_row: bool = diff == 1 || diff == 2;
+                    if let Some(col) = on_same_col {
+                        figures_to_add.push(Figure::col(col) - pencilmarks_figure);
+                    }
 
-                        let figure = if is_row {
-                            Figure::row(Figure::row_of(positions[0]))
-                        } else {
-                            Figure::col(Figure::col_of(positions[0]))
-                        };
-
-                        res.push(Action::RemovePencilmarks(
-                            figure - positions.into(),
-                            vec![pencilmark],
-                        ));
+                    for figure_to_add in figures_to_add {
+                        res.push(Action::RemovePencilmarks(figure_to_add, vec![pencilmark]));
                     }
                 }
             }
