@@ -1,4 +1,4 @@
-use std::{array, collections::HashMap, ops::{Index, IndexMut}, str::FromStr};
+use std::{array, collections::HashMap, ops::Index, str::FromStr};
 
 use crate::{cell::Cell, figure::Figure};
 
