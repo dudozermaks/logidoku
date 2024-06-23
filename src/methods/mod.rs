@@ -11,6 +11,13 @@ use crate::{action::Action, grid::Grid};
 /// for the given method.
 pub trait MethodCreator {
     fn get_all_applications(&self, grid: &Grid) -> Vec<Action>;
+    fn get_all_helpful_applications(&self, grid: &Grid) -> Vec<Action> {
+        self.get_all_applications(grid)
+            .iter()
+            .filter(|method| method.is_helpful(grid))
+            .cloned()
+            .collect()
+    }
 }
 
 // This is used for internal testing of the methods.
