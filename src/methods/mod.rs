@@ -2,6 +2,7 @@ pub mod box_line_reduction;
 pub mod hidden_n;
 pub mod naked_n;
 pub mod pointing_ns;
+pub mod x_wing;
 
 use std::str::FromStr;
 
