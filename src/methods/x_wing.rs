@@ -1,6 +1,6 @@
 use crate::{action::Action, figure::Figure};
 
-use super::MethodCreator;
+use super::Method;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 struct Candidate {
@@ -8,9 +8,9 @@ struct Candidate {
     positions: (usize, usize),
 }
 
-pub struct XWingCreator {}
+pub struct XWing {}
 
-impl XWingCreator {
+impl XWing {
     fn get_all(&self, grid: &crate::grid::Grid, in_row: bool) -> Vec<crate::action::Action> {
         let mut res = vec![];
 
@@ -77,7 +77,7 @@ impl XWingCreator {
     }
 }
 
-impl MethodCreator for XWingCreator {
+impl Method for XWing {
     fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<crate::action::Action> {
         let mut res = self.get_all(grid, true);
 
@@ -97,7 +97,7 @@ mod tests {
     fn x_wing() {
         test_method(
             "100000569492056108056109240009640801064010000218035604040500016905061402621000005",
-            XWingCreator {},
+            XWing {},
             vec![
                 Action::RemovePencilmarks(
                     vec![0, 1, 2, 4, 6, 7, 8, 72, 73, 74, 76, 78, 79, 80].into(),
@@ -124,7 +124,7 @@ mod tests {
 
         test_method(
             "000000094760910050090002081070050010000709000080031067240100070010090045900000100",
-            XWingCreator {},
+            XWing {},
             vec![
                 Action::RemovePencilmarks(
                     vec![1, 3, 4, 5, 6, 7, 8, 37, 39, 40, 41, 42, 43, 44].into(),

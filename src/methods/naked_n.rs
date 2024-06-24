@@ -3,14 +3,14 @@ use std::collections::HashSet;
 use crate::{action::Action, cell::Cell, figure::Figure};
 
 // TODO: rename to Method
-use super::MethodCreator;
+use super::Method;
 
-pub struct NakedNCreator {
+pub struct NakedN {
     // TODO: change all of that to enums
     n: u8,
 }
 
-impl NakedNCreator {
+impl NakedN {
     fn single_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         let mut res = vec![];
 
@@ -66,7 +66,7 @@ impl NakedNCreator {
     }
 }
 
-impl MethodCreator for NakedNCreator {
+impl Method for NakedN {
     fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         if self.n == 1 {
             self.single_applications(grid)
@@ -86,13 +86,13 @@ mod tests {
     fn get_and_apply_single() {
         test_method(
             "401003050000605084895407136030060405900050300050001200240500007009000500500092000",
-            NakedNCreator { n: 1 },
+            NakedN { n: 1 },
             vec![Action::PlaceNumber(22, 2)],
         );
 
         test_method(
             "401003050000605084895427136030060405900050300050001200240500007009000500500092000",
-            NakedNCreator { n: 1 },
+            NakedN { n: 1 },
             vec![Action::PlaceNumber(4, 8), Action::PlaceNumber(13, 1)],
         );
     }
@@ -101,7 +101,7 @@ mod tests {
     fn get_and_apply_pairs() {
         test_method(
             "400000938032094100095300240370609004529001673604703090957008300003900400240030709",
-            NakedNCreator { n: 2 },
+            NakedN { n: 2 },
             vec![
                 Action::RemovePencilmarks(vec![0, 3, 4, 5, 6, 7, 8].into(), vec![1, 6]),
                 Action::RemovePencilmarks(vec![0, 9, 10, 11, 18, 19, 20].into(), vec![1, 6]),
@@ -119,7 +119,7 @@ mod tests {
     fn get_and_apply_triples() {
         test_method(
             "294513006600842319300697254000056000040080060000470000730164005900735001400928637",
-            NakedNCreator { n: 3 },
+            NakedN { n: 3 },
             vec![
                 Action::RemovePencilmarks(vec![0, 9, 18, 54, 63, 72].into(), vec![1, 5, 8]),
                 Action::RemovePencilmarks(vec![28, 29, 37, 38, 46, 47].into(), vec![1, 5, 8]),
@@ -135,7 +135,7 @@ mod tests {
     fn get_and_apply_quads() {
         test_method(
             "000030086000020040090078520371856294900142375400397618200703859039205467700904132",
-            NakedNCreator { n: 4 },
+            NakedN { n: 4 },
             vec![
                 Action::RemovePencilmarks(vec![27, 36, 45, 54, 72].into(), vec![1, 5, 6, 8]),
                 Action::RemovePencilmarks(vec![1, 2, 11, 19, 20].into(), vec![1, 5, 6, 8]),

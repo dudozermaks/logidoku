@@ -10,7 +10,7 @@ use crate::{action::Action, grid::Grid};
 
 /// Methods follow the definition from https://sudokuwiki.org, if it is avalible
 /// for the given method.
-pub trait MethodCreator {
+pub trait Method {
     fn get_all_applications(&self, grid: &Grid) -> Vec<Action>;
     fn get_all_helpful_applications(&self, grid: &Grid) -> Vec<Action> {
         self.get_all_applications(grid)
@@ -25,7 +25,7 @@ pub trait MethodCreator {
 // Rust does not mark functions used in tests as used,
 // so disable the warning
 #[allow(dead_code)]
-fn test_method<T: MethodCreator>(grid: &str, creator: T, mut valid_candidates: Vec<Action>) {
+fn test_method<T: Method>(grid: &str, creator: T, mut valid_candidates: Vec<Action>) {
     let grid = Grid::from_str(grid).unwrap();
 
     let mut candidates = creator.get_all_applications(&grid);

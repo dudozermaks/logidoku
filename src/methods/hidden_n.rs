@@ -2,13 +2,13 @@ use std::collections::{BTreeSet, HashSet};
 
 use crate::{action::Action, figure::Figure};
 
-use super::MethodCreator;
+use super::Method;
 
-pub struct HiddenNCreator {
+pub struct HiddenN {
     n: u8,
 }
 
-impl HiddenNCreator {
+impl HiddenN {
     fn single_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         let mut res = BTreeSet::new();
 
@@ -70,7 +70,7 @@ impl HiddenNCreator {
     }
 }
 
-impl MethodCreator for HiddenNCreator {
+impl Method for HiddenN {
     fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         if self.n == 1 {
             self.single_applications(grid)
@@ -85,14 +85,14 @@ mod tests {
 
     use crate::{
         action::Action,
-        methods::{hidden_n::HiddenNCreator, test_method},
+        methods::{hidden_n::HiddenN, test_method},
     };
 
     #[test]
     fn get_and_apply_single() {
         test_method(
             "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
-            HiddenNCreator { n: 1 },
+            HiddenN { n: 1 },
             vec![
                 Action::PlaceNumber(0, 7),
                 Action::PlaceNumber(3, 1),
@@ -113,7 +113,7 @@ mod tests {
     fn get_and_apply_pairs() {
         test_method(
             "720408030080000047401076802810739000000851000000264080209680413340000008168943275",
-            HiddenNCreator { n: 2 },
+            HiddenN { n: 2 },
             vec![
                 Action::PreservePencilmarks(vec![29, 38].into(), vec![2, 4]),
                 Action::PreservePencilmarks(vec![42, 51].into(), vec![3, 7]),
@@ -128,7 +128,7 @@ mod tests {
     fn get_and_apply_triples() {
         test_method(
             "000001030231090000065003100678924300103050006000136700009360570006019843300000000",
-            HiddenNCreator { n: 3 },
+            HiddenN { n: 3 },
             vec![
                 Action::PreservePencilmarks(vec![2, 47, 74].into(), vec![2, 4, 7]),
                 Action::PreservePencilmarks(vec![3, 6, 8].into(), vec![2, 5, 6]),
@@ -142,7 +142,7 @@ mod tests {
     fn get_and_apply_quads() {
         test_method(
             "901500046425090081860010020502000000019000460600000002196040253200060817000001694",
-            HiddenNCreator { n: 4 },
+            HiddenN { n: 4 },
             vec![
                 Action::PreservePencilmarks(vec![1, 4, 5, 6].into(), vec![2, 3, 7, 8]), 
                 Action::PreservePencilmarks(vec![20, 47, 65, 74].into(), vec![3, 4, 7, 8]), 

@@ -1,12 +1,12 @@
 use crate::{action::Action, figure::Figure};
 
-use super::MethodCreator;
+use super::Method;
 
-pub struct PointingNsCreator {
+pub struct PointingNs {
     n: u8,
 }
 
-impl MethodCreator for PointingNsCreator {
+impl Method for PointingNs {
     fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<crate::action::Action> {
         let mut res = vec![];
 
@@ -52,7 +52,7 @@ mod tests {
     fn pointing_pairs() {
         test_method(
             "032006100410000000000901000500090004060000071300020005000508000000000519057009860",
-            PointingNsCreator { n: 2 },
+            PointingNs { n: 2 },
             vec![
                 Action::RemovePencilmarks(vec![2, 11, 20, 38, 56, 65, 74].into(), vec![1]),
                 Action::RemovePencilmarks(vec![3, 12, 21, 39, 57, 66, 75].into(), vec![1]),
@@ -73,7 +73,7 @@ mod tests {
     fn pointing_triples() {
         test_method(
             "930050000200630095856002000003180570005020980080005000000800159508210004000560008",
-            PointingNsCreator { n: 3 },
+            PointingNs { n: 3 },
             vec![
                 Action::RemovePencilmarks(vec![75, 76, 77, 78, 79, 80].into(), vec![1]),
                 Action::RemovePencilmarks(vec![0, 1, 2, 3, 4, 5].into(), vec![2]),
