@@ -7,7 +7,6 @@ pub struct Figure {
     positions: BTreeSet<usize>,
 }
 
-// TODO: test untested methods
 impl Figure {
     pub fn row_checked(n: u8) -> Result<Figure, FigureNumberOutOfBoundError> {
         if n > 8 {
@@ -92,6 +91,7 @@ impl Figure {
 
         res
     }
+
     pub fn row_of_checked(i: usize) -> Result<u8, CellIndexOutOfBoundError> {
         if i >= 9 * 9 {
             return Err(CellIndexOutOfBoundError);
@@ -131,9 +131,9 @@ impl Figure {
         Figure::sqr_of_checked(i).unwrap()
     }
 
-    // Returns `Some(row_number)` if all positions lay on the same row
-    // Returns `None` otherwise
-    // Panics if some of the cells are out of bounds of grid (> 80)
+    /// Returns `Some(row_number)` if all positions lay on the same row
+    /// Returns `None` otherwise
+    /// Panics if some of the cells are out of bounds of grid (> 80)
     pub fn is_on_the_same_row(&self) -> Option<u8> {
         let mut res = None;
 
@@ -150,9 +150,9 @@ impl Figure {
         res
     }
 
-    // Returns `Some(col_number)` if all positions lay on the same col
-    // Returns `None` otherwise
-    // Panics if some of the cells are out of bounds of grid (> 80)
+    /// Returns `Some(col_number)` if all positions lay on the same col
+    /// Returns `None` otherwise
+    /// Panics if some of the cells are out of bounds of grid (> 80)
     pub fn is_on_the_same_col(&self) -> Option<u8> {
         let mut res = None;
 
@@ -169,9 +169,9 @@ impl Figure {
         res
     }
 
-    // Returns `Some(sqr_number)` if all positions lay on the same sqr
-    // Returns `None` otherwise
-    // Panics if some of the cells are out of bounds of grid (> 80)
+    /// Returns `Some(sqr_number)` if all positions lay on the same sqr
+    /// Returns `None` otherwise
+    /// Panics if some of the cells are out of bounds of grid (> 80)
     pub fn is_on_the_same_sqr(&self) -> Option<u8> {
         let mut res = None;
 
@@ -328,5 +328,43 @@ mod tests {
         assert!(Figure::col_checked(9).is_err());
         assert!(Figure::sqr_checked(9).is_err());
         assert!(Figure::neighbours_checked(81).is_err());
+    }
+
+    #[test]
+    fn figure_of() {
+        let row = Figure::row_of(40);
+        let col = Figure::col_of(40);
+        let sqr = Figure::sqr_of(40);
+
+        assert_eq!(row, 4);
+        assert_eq!(col, 4);
+        assert_eq!(sqr, 4);
+
+        let row = Figure::row_of(55);
+        let col = Figure::col_of(55);
+        let sqr = Figure::sqr_of(55);
+
+        assert_eq!(row, 6);
+        assert_eq!(col, 1);
+        assert_eq!(sqr, 6);
+    }
+
+    #[test]
+    fn figure_of_checked() {
+        assert!(Figure::row_of_checked(81).is_err());
+        assert!(Figure::col_of_checked(81).is_err());
+        assert!(Figure::sqr_of_checked(81).is_err());
+    }
+
+    #[test]
+    fn is_on_the_same_figure() {
+        assert!((Figure::row(0) - vec![0].into()).is_on_the_same_row().is_some_and(|row| row == 0));
+        assert!((Figure::row(0) + vec![9].into()).is_on_the_same_row().is_none());
+
+        assert!((Figure::col(0) - vec![0].into()).is_on_the_same_col().is_some_and(|col| col == 0));
+        assert!((Figure::col(0) + vec![1].into()).is_on_the_same_col().is_none());
+
+        assert!((Figure::sqr(0) - vec![0].into()).is_on_the_same_sqr().is_some_and(|sqr| sqr == 0));
+        assert!((Figure::sqr(0) + vec![3].into()).is_on_the_same_sqr().is_none());
     }
 }
