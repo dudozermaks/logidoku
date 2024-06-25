@@ -3,13 +3,12 @@ use std::{array, collections::HashMap, ops::Index, str::FromStr};
 use crate::{cell::Cell, figure::Figure};
 
 /// Grid represents 9 by 9 matrix of [Cells]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Grid {
     matrix: [Cell; 81],
 }
 
 impl Grid {
-    // TODO: Test
     fn updtae_cell_neighbours(&mut self, i: usize) {
         let center_cell = self.matrix[i].clone();
 
@@ -24,18 +23,15 @@ impl Grid {
         }
     }
 
-    // TODO: Test
     pub fn set_number(&mut self, i: usize, number: u8) {
         self.matrix[i] = Cell::Number(number);
         self.updtae_cell_neighbours(i);
     }
 
-    // TODO: Test
     pub fn set_pencilmarks(&mut self, i: usize, pencilmarks: Vec<u8>) {
         self.matrix[i] = Cell::Pencilmarks(pencilmarks);
     }
 
-    // TODO: Test
     /// Returns map: number to cell in which it occurs.
     pub fn pencilmarks_info(&self, figure: Figure) -> HashMap<u8, Vec<usize>> {
         let mut res: HashMap<u8, Vec<usize>> = HashMap::new();
@@ -148,10 +144,8 @@ mod tests {
     fn init_string_is_ok() {
         let grid = Grid::from_str(
             "401003050000605084895400136030060405900050300050001200240500007009000500500092000",
-        );
-        assert!(grid.is_ok());
-
-        let grid = grid.unwrap();
+        )
+        .unwrap();
 
         assert_eq!(grid.matrix[8], Cell::Pencilmarks([2, 9].to_vec()));
         assert_eq!(grid.matrix[38], Cell::Pencilmarks([2, 4, 6, 7, 8].to_vec()));
@@ -161,5 +155,88 @@ mod tests {
         assert_eq!(grid.matrix[2], Cell::Number(1));
         assert_eq!(grid.matrix[26], Cell::Number(6));
         assert_eq!(grid.matrix[36], Cell::Number(9));
+    }
+
+    #[test]
+    fn set_number() {
+        let mut grid = Grid::from_str(
+            "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
+        )
+        .unwrap();
+
+        grid.set_number(40, 5);
+
+        let grid_should_be = Grid::from_str(
+            //                                       * here is this 5
+            "000004028406000005100030600000301000087050140000709000002010003900000507670400000",
+        )
+        .unwrap();
+
+        assert_eq!(grid, grid_should_be);
+    }
+
+    #[test]
+    fn set_pencilmarks() {
+        let mut grid = Grid::from_str(
+            "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
+        )
+        .unwrap();
+
+        let mut grid_should_be = grid.clone();
+
+        grid.set_pencilmarks(40, vec![2, 5]);
+
+        grid_should_be.matrix[40] = Cell::Pencilmarks(vec![2, 5]);
+
+        assert_eq!(grid, grid_should_be);
+    }
+    #[test]
+    fn update_cell_neighbours() {
+        let mut grid = Grid::from_str(
+            "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
+        )
+        .unwrap();
+
+        // Set manually, so that neighbours do not update
+        grid.matrix[40] = Cell::Number(5);
+
+        let mut grid_should_be = grid.clone();
+
+        // Column
+        grid_should_be.matrix[4] = Cell::Pencilmarks(vec![6, 7, 9]);
+        grid_should_be.matrix[13] = Cell::Pencilmarks(vec![2, 7, 8, 9]);
+        grid_should_be.matrix[31] = Cell::Pencilmarks(vec![2, 4, 6, 8]);
+        grid_should_be.matrix[49] = Cell::Pencilmarks(vec![2, 4, 6, 8]);
+        grid_should_be.matrix[67] = Cell::Pencilmarks(vec![2, 6, 8]);
+        grid_should_be.matrix[76] = Cell::Pencilmarks(vec![2, 8, 9]);
+        // Row
+        grid_should_be.matrix[36] = Cell::Pencilmarks(vec![2, 3]);
+        grid_should_be.matrix[39] = Cell::Pencilmarks(vec![2, 6]);
+        grid_should_be.matrix[41] = Cell::Pencilmarks(vec![2, 6]);
+        grid_should_be.matrix[44] = Cell::Pencilmarks(vec![2, 6, 9]);
+        // Square (31, 39, 41, 49) - already done
+
+        grid.updtae_cell_neighbours(40);
+
+        assert_eq!(grid, grid_should_be);
+    }
+
+    #[test]
+    fn pencilmarks_info() {
+        let grid = Grid::from_str(
+            "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
+        )
+        .unwrap();
+
+        let info = grid.pencilmarks_info(Figure::row(0));
+
+        assert_eq!(info, HashMap::from([
+                (1, vec![3]),
+                (3, vec![0, 1, 2, 6]),
+                (5, vec![0, 1, 2, 3, 4]),
+                (6, vec![3, 4]),
+                (7, vec![0, 4, 6]),
+                (9, vec![1, 2, 3, 4, 6]),
+        ]));
     }
 }
