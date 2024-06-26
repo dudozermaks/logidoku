@@ -1,4 +1,4 @@
-use std::{collections::BTreeSet, ops::Sub};
+use std::{collections::BTreeSet, ops::{Sub, AddAssign, SubAssign, Add}};
 
 /// Figure can be row, column, square, or some set of positions.
 #[derive(Debug, PartialEq, Clone, PartialOrd, Eq, Ord)]
@@ -189,13 +189,35 @@ impl Figure {
     }
 }
 
-impl std::ops::Add for Figure {
+impl Add for Figure {
     type Output = Self;
 
     fn add(mut self, mut rhs: Self) -> Self::Output {
         self.positions.append(&mut rhs.positions);
 
         self
+    }
+}
+
+impl AddAssign for Figure{
+    fn add_assign(&mut self, mut rhs: Self) {
+        self.positions.append(&mut rhs.positions);
+    }
+}
+
+impl Sub for Figure {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Figure {
+            positions: self.positions.difference(&rhs.positions).cloned().collect(),
+        }
+    }
+}
+
+impl SubAssign for Figure {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.positions = self.positions.difference(&rhs.positions).cloned().collect();
     }
 }
 
@@ -213,16 +235,6 @@ impl From<Vec<usize>> for Figure {
     fn from(value: Vec<usize>) -> Self {
         Figure {
             positions: BTreeSet::from_iter(value.into_iter()),
-        }
-    }
-}
-
-impl Sub for Figure {
-    type Output = Self;
-
-    fn sub(self, rhs: Self) -> Self::Output {
-        Figure {
-            positions: self.positions.difference(&rhs.positions).cloned().collect(),
         }
     }
 }
