@@ -3,6 +3,7 @@ pub mod hidden_n;
 pub mod naked_n;
 pub mod pointing_ns;
 pub mod fishes;
+pub mod singles_chains;
 
 use std::str::FromStr;
 

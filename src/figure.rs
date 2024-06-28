@@ -1,7 +1,10 @@
-use std::{collections::BTreeSet, ops::{Sub, AddAssign, SubAssign, Add}};
+use std::{
+    collections::BTreeSet,
+    ops::{Add, AddAssign, Sub, SubAssign},
+};
 
 /// Figure can be row, column, square, or some set of positions.
-#[derive(Debug, PartialEq, Clone, PartialOrd, Eq, Ord)]
+#[derive(Debug, PartialEq, Clone, PartialOrd, Eq, Ord, Hash)]
 pub struct Figure {
     // Choose BTreeSet here because iterating over its elements is deterministic
     positions: BTreeSet<usize>,
@@ -187,6 +190,20 @@ impl Figure {
 
         res
     }
+
+    pub fn intersection(&self, other: Figure) -> Figure {
+        Figure {
+            positions: self
+                .positions
+                .intersection(&other.positions)
+                .cloned()
+                .collect(),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.positions.len()
+    }
 }
 
 impl Add for Figure {
@@ -199,7 +216,7 @@ impl Add for Figure {
     }
 }
 
-impl AddAssign for Figure{
+impl AddAssign for Figure {
     fn add_assign(&mut self, mut rhs: Self) {
         self.positions.append(&mut rhs.positions);
     }
@@ -370,13 +387,25 @@ mod tests {
 
     #[test]
     fn is_on_the_same_figure() {
-        assert!((Figure::row(0) - vec![0].into()).is_on_the_same_row().is_some_and(|row| row == 0));
-        assert!((Figure::row(0) + vec![9].into()).is_on_the_same_row().is_none());
+        assert!((Figure::row(0) - vec![0].into())
+            .is_on_the_same_row()
+            .is_some_and(|row| row == 0));
+        assert!((Figure::row(0) + vec![9].into())
+            .is_on_the_same_row()
+            .is_none());
 
-        assert!((Figure::col(0) - vec![0].into()).is_on_the_same_col().is_some_and(|col| col == 0));
-        assert!((Figure::col(0) + vec![1].into()).is_on_the_same_col().is_none());
+        assert!((Figure::col(0) - vec![0].into())
+            .is_on_the_same_col()
+            .is_some_and(|col| col == 0));
+        assert!((Figure::col(0) + vec![1].into())
+            .is_on_the_same_col()
+            .is_none());
 
-        assert!((Figure::sqr(0) - vec![0].into()).is_on_the_same_sqr().is_some_and(|sqr| sqr == 0));
-        assert!((Figure::sqr(0) + vec![3].into()).is_on_the_same_sqr().is_none());
+        assert!((Figure::sqr(0) - vec![0].into())
+            .is_on_the_same_sqr()
+            .is_some_and(|sqr| sqr == 0));
+        assert!((Figure::sqr(0) + vec![3].into())
+            .is_on_the_same_sqr()
+            .is_none());
     }
 }
