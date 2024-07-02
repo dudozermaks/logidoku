@@ -50,6 +50,10 @@ impl Grid {
 
         return res;
     }
+
+    pub fn is_solved(&self) -> bool {
+        !self.matrix.iter().any(|cell| cell.is_pencilmarks())
+    }
 }
 
 impl FromStr for Grid {
@@ -230,13 +234,31 @@ mod tests {
 
         let info = grid.pencilmarks_info(Figure::row(0));
 
-        assert_eq!(info, HashMap::from([
+        assert_eq!(
+            info,
+            HashMap::from([
                 (1, vec![3]),
                 (3, vec![0, 1, 2, 6]),
                 (5, vec![0, 1, 2, 3, 4]),
                 (6, vec![3, 4]),
                 (7, vec![0, 4, 6]),
                 (9, vec![1, 2, 3, 4, 6]),
-        ]));
+            ])
+        );
+    }
+
+    #[test]
+    fn is_solved() {
+        let unsolved_grid = Grid::from_str(
+            "007010000000800500180009064600000003071080640400000005840600031005002000000030700",
+        )
+        .unwrap();
+        let solved_grid = Grid::from_str(
+            "567314928394826517182759364658247193971583642423961875849675231735192486216438759",
+        )
+        .unwrap();
+
+        assert!(!unsolved_grid.is_solved());
+        assert!(solved_grid.is_solved());
     }
 }
