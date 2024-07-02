@@ -3,7 +3,7 @@ use crate::{action::Action, figure::Figure};
 use super::Method;
 
 pub struct PointingNs {
-    n: u8,
+    pub n: u8,
 }
 
 impl Method for PointingNs {

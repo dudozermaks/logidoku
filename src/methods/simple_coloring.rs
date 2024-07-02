@@ -161,9 +161,9 @@ impl PartialEq for ChainLink {
     }
 }
 
-pub struct SinglesChains {}
+pub struct SimpleColoring {}
 
-impl SinglesChains {
+impl SimpleColoring {
     fn get_chains_for_number(&self, grid: &Grid, number: u8) -> Vec<Vec<ChainLink>> {
         let mut res = vec![];
 
@@ -192,7 +192,7 @@ impl SinglesChains {
     }
 }
 
-impl Method for SinglesChains {
+impl Method for SimpleColoring {
     fn get_all_applications(&self, grid: &Grid) -> Vec<crate::action::Action> {
         let mut res = vec![];
 
@@ -238,7 +238,7 @@ mod tests {
     fn test(grid: &str, mut predictions: Vec<Action>) {
         let grid = Grid::from_str(grid).unwrap();
 
-        let mut actions = SinglesChains {}.get_all_helpful_applications(&grid);
+        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid);
         actions.sort();
         predictions.sort();
 
@@ -299,7 +299,7 @@ mod tests {
         grid.set_pencilmarks(44, vec![3, 8]);
 
 
-        let mut actions = SinglesChains {}.get_all_helpful_applications(&grid);
+        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid);
         actions.sort();
 
         let mut predictions = vec![

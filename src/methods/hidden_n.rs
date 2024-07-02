@@ -5,7 +5,7 @@ use crate::{action::Action, figure::Figure};
 use super::Method;
 
 pub struct HiddenN {
-    n: u8,
+    pub n: u8,
 }
 
 impl HiddenN {

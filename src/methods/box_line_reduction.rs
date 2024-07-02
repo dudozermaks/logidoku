@@ -2,8 +2,8 @@ use crate::{action::Action, figure::Figure};
 
 use super::Method;
 
-struct BoxLineReduction {
-    n: u8,
+pub struct BoxLineReduction {
+    pub n: u8,
 }
 
 impl BoxLineReduction {

@@ -2,12 +2,11 @@ use std::collections::HashSet;
 
 use crate::{action::Action, cell::Cell, figure::Figure};
 
-// TODO: rename to Method
 use super::Method;
 
 pub struct NakedN {
     // TODO: change all of that to enums
-    n: u8,
+    pub n: u8,
 }
 
 impl NakedN {
