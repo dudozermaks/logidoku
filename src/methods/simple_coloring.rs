@@ -87,13 +87,13 @@ impl ChainLink {
                 let next_links = chain_link
                     .get_next(grid)
                     .into_iter()
-                    // before extending new stack, removing every duplicate, already inserted in res.
+                    // before extending new stack, removing every duplicate, already inserted in res,
                     .filter(|link| !res.contains(&link));
 
                 new_stack.extend(next_links);
             }
 
-            stack = HashSet::from_iter(new_stack.iter().unique().cloned());
+            stack = new_stack;
             res.extend(stack.clone());
         }
 
@@ -147,6 +147,8 @@ impl ChainLink {
         }
 
         Some(Action::RemovePencilmarks(
+            // I can't think of an edge case, where you need to substract not only this 2
+            // positions, but the full chain's positions. Maybe I'm wrong here.
             intersection - vec![self.pos, other.pos].into(),
             vec![self.number],
         ))
@@ -197,12 +199,11 @@ impl Method for SinglesChains {
         let mut chains: Vec<Vec<ChainLink>> = vec![];
 
         for i in 1..=9 {
-            // let i = 9;
             chains.extend(self.get_chains_for_number(grid, i));
         }
         for chain in &mut chains {
             for link in chain {
-                link.generate_info()
+                link.generate_info();
             }
         }
 
@@ -215,11 +216,11 @@ impl Method for SinglesChains {
                 let rule4 = link1.rule4(link2);
 
                 if let Some(rule2) = rule2 {
-                    res.push(rule2)
+                    res.push(rule2);
                 }
 
                 if let Some(rule4) = rule4 {
-                    res.push(rule4)
+                    res.push(rule4);
                 }
             }
         }
@@ -297,8 +298,10 @@ mod tests {
         grid.set_pencilmarks(49, vec![3, 8]);
         grid.set_pencilmarks(44, vec![3, 8]);
 
+
         let mut actions = SinglesChains {}.get_all_helpful_applications(&grid);
         actions.sort();
+
         let mut predictions = vec![
             Action::RemovePencilmarks(vec![26, 39].into(), vec![3]),
             Action::RemovePencilmarks(vec![13, 53].into(), vec![3]),
@@ -316,6 +319,7 @@ mod tests {
             Action::RemovePencilmarks(vec![17, 40].into(), vec![8]),
         ];
         predictions.sort();
+
 
         assert_eq!(actions, predictions);
     }
