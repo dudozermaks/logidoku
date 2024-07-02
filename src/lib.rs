@@ -3,3 +3,4 @@ pub mod cell;
 pub mod figure;
 pub mod grid;
 pub mod methods;
+pub mod solver;
