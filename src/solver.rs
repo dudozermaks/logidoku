@@ -1,42 +1,13 @@
-use crate::{action::Action, grid::Grid, methods::Method};
+use crate::{action::Action, grid::Grid, methods::{Method, naked_n::NakedN, hidden_n::HiddenN, pointing_ns::PointingNs, box_line_reduction::BoxLineReduction, fishes::Fishes, simple_coloring::SimpleColoring}};
 
 pub struct Solver {
     methods: Vec<Box<dyn Method>>,
 }
 
 impl Solver {
-    pub fn take_step(&self, grid: &Grid, stop_after_first: bool) -> Vec<Action> {
-        let mut applications = vec![];
-        for method in &self.methods {
-            let method_applications = method.get_all_helpful_applications(grid);
-
-            if !method_applications.is_empty() {
-                applications.extend(method_applications);
-
-                if stop_after_first {
-                    break;
-                }
-            }
-        }
-
-        applications
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use std::str::FromStr;
-
-    use crate::methods::{
-        box_line_reduction::BoxLineReduction, fishes::Fishes, hidden_n::HiddenN, naked_n::NakedN,
-        pointing_ns::PointingNs, simple_coloring::SimpleColoring,
-    };
-
-    use super::*;
-
-    #[test]
-    fn take_step() {
-        let solver = Solver {
+    /// Returns solver with all methods in the sudokuwiki.org order
+    pub fn all_methods() -> Self {
+        Solver {
             methods: vec![
                 // Original sudokuwiki.org order
                 Box::new(NakedN { n: 1 }),
@@ -62,7 +33,35 @@ mod tests {
                 //
                 Box::new(SimpleColoring {}),
             ],
-        };
+        }
+    }
+    pub fn take_step(&self, grid: &Grid, stop_after_first: bool) -> Vec<Action> {
+        let mut applications = vec![];
+        for method in &self.methods {
+            let method_applications = method.get_all_helpful_applications(grid);
+
+            if !method_applications.is_empty() {
+                applications.extend(method_applications);
+
+                if stop_after_first {
+                    break;
+                }
+            }
+        }
+
+        applications
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use super::*;
+
+    #[test]
+    fn take_step() {
+        let solver = Solver::all_methods();
 
         {
             let easiest_grid = Grid::from_str(
