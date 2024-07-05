@@ -1,4 +1,13 @@
-use crate::{action::Action, grid::Grid, methods::{Method, naked_n::NakedN, hidden_n::HiddenN, pointing_ns::PointingNs, box_line_reduction::BoxLineReduction, fishes::Fishes, simple_coloring::SimpleColoring}};
+use std::any::Any;
+
+use crate::{
+    action::Action,
+    grid::Grid,
+    methods::{
+        box_line_reduction::BoxLineReduction, fishes::Fishes, hidden_n::HiddenN, naked_n::NakedN,
+        pointing_ns::PointingNs, simple_coloring::SimpleColoring, Method,
+    },
+};
 
 pub struct Solver {
     methods: Vec<Box<dyn Method>>,
@@ -51,7 +60,21 @@ impl Solver {
 
         applications
     }
+
+    pub fn methods(&self) -> &Vec<Box<dyn Method>> {
+        &self.methods
+    }
 }
+
+impl PartialEq for Solver {
+    fn eq(&self, other: &Self) -> bool {
+        self.methods
+            .iter()
+            .zip(other.methods.iter())
+            .all(|(a, b)| a.type_id() == b.type_id())
+    }
+}
+impl Eq for Solver {}
 
 #[cfg(test)]
 mod tests {
