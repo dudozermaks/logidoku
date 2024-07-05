@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, fmt::Display};
 
 use crate::{action::Action, cell::Cell, figure::Figure};
 
@@ -64,6 +64,21 @@ impl Naked {
             }
         }
         res
+    }
+}
+
+impl Display for Naked{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Naked {}",
+            match self {
+                Naked::Single => "Single",
+                Naked::Pair => "Pair",
+                Naked::Triple => "Triple",
+                Naked::Quad => "Quad",
+            }
+        )
     }
 }
 

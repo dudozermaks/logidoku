@@ -1,4 +1,7 @@
-use std::collections::{BTreeSet, HashSet};
+use std::{
+    collections::{BTreeSet, HashSet},
+    fmt::Display,
+};
 
 use crate::{action::Action, figure::Figure};
 
@@ -8,7 +11,7 @@ pub enum Hidden {
     Single,
     Pair,
     Triple,
-    Quad
+    Quad,
 }
 
 impl Hidden {
@@ -70,6 +73,21 @@ impl Hidden {
         }
 
         res.into_iter().collect()
+    }
+}
+
+impl Display for Hidden {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Hidden {}",
+            match self {
+                Hidden::Single => "Single",
+                Hidden::Pair => "Pair",
+                Hidden::Triple => "Triple",
+                Hidden::Quad => "Quad",
+            }
+        )
     }
 }
 
@@ -154,12 +172,12 @@ mod tests {
             "901500046425090081860010020502000000019000460600000002196040253200060817000001694",
             Hidden::Quad,
             vec![
-                Action::PreservePencilmarks(vec![1, 4, 5, 6].into(), vec![2, 3, 7, 8]), 
-                Action::PreservePencilmarks(vec![20, 47, 65, 74].into(), vec![3, 4, 7, 8]), 
-                Action::PreservePencilmarks(vec![28, 36, 46, 47].into(), vec![3, 4, 7, 8]), 
-                Action::PreservePencilmarks(vec![30, 32, 48, 50].into(), vec![1, 4, 6, 9]), 
-                Action::PreservePencilmarks(vec![64, 65, 66, 68].into(), vec![3, 4, 5, 9]), 
-                Action::PreservePencilmarks(vec![66, 68, 75, 76].into(), vec![2, 3, 5, 9])
+                Action::PreservePencilmarks(vec![1, 4, 5, 6].into(), vec![2, 3, 7, 8]),
+                Action::PreservePencilmarks(vec![20, 47, 65, 74].into(), vec![3, 4, 7, 8]),
+                Action::PreservePencilmarks(vec![28, 36, 46, 47].into(), vec![3, 4, 7, 8]),
+                Action::PreservePencilmarks(vec![30, 32, 48, 50].into(), vec![1, 4, 6, 9]),
+                Action::PreservePencilmarks(vec![64, 65, 66, 68].into(), vec![3, 4, 5, 9]),
+                Action::PreservePencilmarks(vec![66, 68, 75, 76].into(), vec![2, 3, 5, 9]),
             ],
         )
     }

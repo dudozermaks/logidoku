@@ -1,10 +1,12 @@
+use std::fmt::Display;
+
 use crate::{action::Action, figure::Figure};
 
 use super::Method;
 
 pub enum BoxLineReduction {
     Pair,
-    Triple
+    Triple,
 }
 
 impl BoxLineReduction {
@@ -12,7 +14,7 @@ impl BoxLineReduction {
         &self,
         grid: &crate::grid::Grid,
         figure: &Figure,
-        dimension: usize
+        dimension: usize,
     ) -> Vec<crate::action::Action> {
         let mut res = vec![];
         let pencilmarks_info = grid.pencilmarks_info(figure.clone());
@@ -31,6 +33,19 @@ impl BoxLineReduction {
         }
 
         res
+    }
+}
+
+impl Display for BoxLineReduction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Box Line Reduction (for {})",
+            match self {
+                BoxLineReduction::Pair => "Pair",
+                BoxLineReduction::Triple => "Triple",
+            }
+        )
     }
 }
 

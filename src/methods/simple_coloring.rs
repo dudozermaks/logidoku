@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, fmt::Display};
 
 use itertools::Itertools;
 
@@ -161,7 +161,7 @@ impl PartialEq for ChainLink {
     }
 }
 
-pub struct SimpleColoring {}
+pub struct SimpleColoring;
 
 impl SimpleColoring {
     fn get_chains_for_number(&self, grid: &Grid, number: u8) -> Vec<Vec<ChainLink>> {
@@ -189,6 +189,12 @@ impl SimpleColoring {
         }
 
         res
+    }
+}
+
+impl Display for SimpleColoring {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Simple Coloring")
     }
 }
 

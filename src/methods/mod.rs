@@ -5,13 +5,13 @@ pub mod pointing_ns;
 pub mod fishes;
 pub mod simple_coloring;
 
-use std::str::FromStr;
+use std::{str::FromStr, fmt::Display};
 
 use crate::{action::Action, grid::Grid};
 
 /// Methods follow the definition from https://sudokuwiki.org, if it is avalible
 /// for the given method.
-pub trait Method {
+pub trait Method: Display {
     fn get_all_applications(&self, grid: &Grid) -> Vec<Action>;
     fn get_all_helpful_applications(&self, grid: &Grid) -> Vec<Action> {
         self.get_all_applications(grid)

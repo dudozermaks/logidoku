@@ -1,10 +1,25 @@
+use std::fmt::Display;
+
 use crate::{action::Action, figure::Figure};
 
 use super::Method;
 
 pub enum Pointing {
     Pair,
-    Triple
+    Triple,
+}
+
+impl Display for Pointing {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Pointing {}",
+            match self {
+                Pointing::Pair => "Pair",
+                Pointing::Triple => "Triple",
+            }
+        )
+    }
 }
 
 impl Method for Pointing {

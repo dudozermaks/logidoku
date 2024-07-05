@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Display};
 
 use crate::{action::Action, figure::Figure};
 
@@ -127,6 +127,16 @@ impl Fishes {
         }
 
         res
+    }
+}
+
+impl Display for Fishes {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Fishes::XWing => write!(f, "X-Wing"),
+            Fishes::Swordfish => write!(f, "Swordfish"),
+            Fishes::Jellyfish => write!(f, "Jellyfish"),
+        }
     }
 }
 
