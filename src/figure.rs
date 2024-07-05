@@ -191,6 +191,7 @@ impl Figure {
         res
     }
 
+    /// Returns figure with positions from `self` and `other` figure.
     pub fn intersection(&self, other: Figure) -> Figure {
         Figure {
             positions: self
@@ -201,6 +202,7 @@ impl Figure {
         }
     }
 
+    /// Returns the number of positions in current figure.
     pub fn len(&self) -> usize {
         self.positions.len()
     }

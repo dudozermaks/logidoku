@@ -23,13 +23,13 @@ impl Grid {
         }
     }
 
-    pub fn set_number(&mut self, i: usize, number: u8) {
-        self.matrix[i] = Cell::Number(number);
-        self.updtae_cell_neighbours(i);
+    pub fn set_number(&mut self, position: usize, number: u8) {
+        self.matrix[position] = Cell::Number(number);
+        self.updtae_cell_neighbours(position);
     }
 
-    pub fn set_pencilmarks(&mut self, i: usize, pencilmarks: Vec<u8>) {
-        self.matrix[i] = Cell::Pencilmarks(pencilmarks);
+    pub fn set_pencilmarks(&mut self, position: usize, pencilmarks: Vec<u8>) {
+        self.matrix[position] = Cell::Pencilmarks(pencilmarks);
     }
 
     /// Returns map: number to cell in which it occurs.
@@ -51,6 +51,7 @@ impl Grid {
         return res;
     }
 
+    /// Returns `true` if every cell in grid is `Number`
     pub fn is_solved(&self) -> bool {
         !self.matrix.iter().any(|cell| cell.is_pencilmarks())
     }

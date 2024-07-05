@@ -45,6 +45,10 @@ impl Solver {
             ],
         }
     }
+
+    /// Goes through all methods (in order).
+    /// If `stop_after_first` is true: returns Vec of helpful actions from every method.
+    /// Else: returns helpful applications from the first applicable method.
     pub fn take_step(&self, grid: &Grid, stop_after_first: bool) -> Vec<Action> {
         let mut applications = vec![];
         for method in &self.methods {
@@ -62,6 +66,7 @@ impl Solver {
         applications
     }
 
+    /// Returns all methods.
     pub fn methods(&self) -> &Vec<Box<dyn Method>> {
         &self.methods
     }

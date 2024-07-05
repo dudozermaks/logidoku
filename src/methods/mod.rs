@@ -23,6 +23,7 @@ pub trait Method: Display + DynClone {
     }
 }
 
+// Derive Clone for Box<dyn Method>
 dyn_clone::clone_trait_object!(Method);
 
 // This is used for internal testing of the methods.
