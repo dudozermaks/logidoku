@@ -63,7 +63,7 @@ impl FromStr for Grid {
     /// Empty cell - 0. Everything else returns InvalidCharacter error.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.len() != 9 * 9 {
-            return Err(ParseGridError::InvalidSize);
+            return Err(ParseGridError::InvalidSize(s.len()));
         }
 
         let mut matrix = array::from_fn(|_| Cell::all_pencilmarks());
@@ -99,14 +99,14 @@ impl Index<usize> for Grid {
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ParseGridError {
-    InvalidSize,
+    InvalidSize(usize),
     InvalidCharacter(usize),
 }
 
 impl std::fmt::Display for ParseGridError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
-            ParseGridError::InvalidSize => write!(f, "Invalid Sudoku grid size"),
+            ParseGridError::InvalidSize(size) => write!(f, "Invalid Sudoku grid size: {}", size),
             ParseGridError::InvalidCharacter(pos) => {
                 write!(f, "Invalid character at position: {}", pos)
             }
@@ -125,7 +125,7 @@ mod tests {
         let grid = Grid::from_str(
             "40100305000060508489540013603006040590005030005000120024050000700900050050009200",
         );
-        assert_eq!(grid, Err(ParseGridError::InvalidSize));
+        assert_eq!(grid, Err(ParseGridError::InvalidSize(80)));
     }
 
     #[test]
@@ -133,7 +133,7 @@ mod tests {
         let grid = Grid::from_str(
             "4010030500006050848954001360300604059000503000500012002405000070090005005000920001234",
         );
-        assert_eq!(grid, Err(ParseGridError::InvalidSize));
+        assert_eq!(grid, Err(ParseGridError::InvalidSize(85)));
     }
 
     #[test]
