@@ -4,12 +4,14 @@ use crate::{action::Action, cell::Cell, figure::Figure};
 
 use super::Method;
 
-pub struct NakedN {
-    // TODO: change all of that to enums
-    pub n: u8,
+pub enum Naked {
+    Single,
+    Pair,
+    Triple,
+    Quad
 }
 
-impl NakedN {
+impl Naked {
     fn single_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
         let mut res = vec![];
 
@@ -23,7 +25,7 @@ impl NakedN {
 
         res
     }
-    fn multiple_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
+    fn multiple_applications(&self, grid: &crate::grid::Grid, dimension: usize) -> Vec<Action> {
         let mut res = vec![];
 
         for f in Figure::all_figures() {
@@ -32,11 +34,11 @@ impl NakedN {
 
             for i in f.clone() {
                 if let Cell::Pencilmarks(pencilmarks) = &grid[i] {
-                    if (2..=self.n as usize).contains(&pencilmarks.len()) {
+                    if (2..=dimension).contains(&pencilmarks.len()) {
                         candidates.push(i);
                     }
 
-                    if pencilmarks.len() == self.n.into() {
+                    if pencilmarks.len() == dimension {
                         lead_sets.insert(pencilmarks);
                     }
                 }
@@ -53,7 +55,7 @@ impl NakedN {
                     }
                 }
 
-                if possible_positions.len() == self.n.into() {
+                if possible_positions.len() == dimension {
                     res.push(Action::RemovePencilmarks(
                         f.clone() - possible_positions.clone().into(),
                         lead_set.to_vec(),
@@ -65,12 +67,19 @@ impl NakedN {
     }
 }
 
-impl Method for NakedN {
+impl Method for Naked {
     fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
-        if self.n == 1 {
+        let dimension = match self {
+            Naked::Single => 1,
+            Naked::Pair => 2,
+            Naked::Triple => 3,
+            Naked::Quad => 4,
+        };
+
+        if dimension == 1 {
             self.single_applications(grid)
         } else {
-            self.multiple_applications(grid)
+            self.multiple_applications(grid, dimension)
         }
     }
 }
@@ -85,13 +94,13 @@ mod tests {
     fn get_and_apply_single() {
         test_method(
             "401003050000605084895407136030060405900050300050001200240500007009000500500092000",
-            NakedN { n: 1 },
+            Naked::Single,
             vec![Action::PlaceNumber(22, 2)],
         );
 
         test_method(
             "401003050000605084895427136030060405900050300050001200240500007009000500500092000",
-            NakedN { n: 1 },
+            Naked::Single,
             vec![Action::PlaceNumber(4, 8), Action::PlaceNumber(13, 1)],
         );
     }
@@ -100,7 +109,7 @@ mod tests {
     fn get_and_apply_pairs() {
         test_method(
             "400000938032094100095300240370609004529001673604703090957008300003900400240030709",
-            NakedN { n: 2 },
+            Naked::Pair,
             vec![
                 Action::RemovePencilmarks(vec![0, 3, 4, 5, 6, 7, 8].into(), vec![1, 6]),
                 Action::RemovePencilmarks(vec![0, 9, 10, 11, 18, 19, 20].into(), vec![1, 6]),
@@ -118,7 +127,7 @@ mod tests {
     fn get_and_apply_triples() {
         test_method(
             "294513006600842319300697254000056000040080060000470000730164005900735001400928637",
-            NakedN { n: 3 },
+            Naked::Triple,
             vec![
                 Action::RemovePencilmarks(vec![0, 9, 18, 54, 63, 72].into(), vec![1, 5, 8]),
                 Action::RemovePencilmarks(vec![28, 29, 37, 38, 46, 47].into(), vec![1, 5, 8]),
@@ -134,7 +143,7 @@ mod tests {
     fn get_and_apply_quads() {
         test_method(
             "000030086000020040090078520371856294900142375400397618200703859039205467700904132",
-            NakedN { n: 4 },
+            Naked::Quad,
             vec![
                 Action::RemovePencilmarks(vec![27, 36, 45, 54, 72].into(), vec![1, 5, 6, 8]),
                 Action::RemovePencilmarks(vec![1, 2, 11, 19, 20].into(), vec![1, 5, 6, 8]),

@@ -2,8 +2,9 @@ use crate::{action::Action, figure::Figure};
 
 use super::Method;
 
-pub struct BoxLineReduction {
-    pub n: u8,
+pub enum BoxLineReduction {
+    Pair,
+    Triple
 }
 
 impl BoxLineReduction {
@@ -11,12 +12,13 @@ impl BoxLineReduction {
         &self,
         grid: &crate::grid::Grid,
         figure: &Figure,
+        dimension: usize
     ) -> Vec<crate::action::Action> {
         let mut res = vec![];
         let pencilmarks_info = grid.pencilmarks_info(figure.clone());
 
         for (pencilmark, positions) in pencilmarks_info {
-            if positions.len() == self.n.into() {
+            if positions.len() == dimension {
                 let pencilmarks_figure: Figure = positions.into();
 
                 if let Some(sqr) = pencilmarks_figure.is_on_the_same_sqr() {
@@ -35,10 +37,14 @@ impl BoxLineReduction {
 impl Method for BoxLineReduction {
     fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<crate::action::Action> {
         let mut res = vec![];
+        let dimension = match self {
+            BoxLineReduction::Pair => 2,
+            BoxLineReduction::Triple => 3,
+        };
 
         for i in 0..9 {
-            res.append(&mut self.find_in_figure(grid, &Figure::row(i)));
-            res.append(&mut self.find_in_figure(grid, &Figure::col(i)));
+            res.append(&mut self.find_in_figure(grid, &Figure::row(i), dimension));
+            res.append(&mut self.find_in_figure(grid, &Figure::col(i), dimension));
         }
 
         res
@@ -55,7 +61,7 @@ mod tests {
     fn box_line_reduction_2_cells() {
         test_method(
             "016007803090800000870001260048000300650009082039000650060900020080002936924600510",
-            BoxLineReduction { n: 2 },
+            BoxLineReduction::Pair,
             vec![
                 Action::RemovePencilmarks(vec![1, 2, 10, 11, 18, 19, 20].into(), vec![4]),
                 Action::RemovePencilmarks(vec![3, 4, 5, 12, 21, 22, 23].into(), vec![6]),
@@ -77,7 +83,7 @@ mod tests {
     fn box_line_reduction_3_cells() {
         test_method(
             "020943715904000600750000040500480000200000453400352000042000081005004260090208504",
-            BoxLineReduction { n: 3 },
+            BoxLineReduction::Triple,
             vec![
                 Action::RemovePencilmarks(vec![3, 4, 5, 21, 22, 23].into(), vec![7]),
                 Action::RemovePencilmarks(vec![27, 28, 36, 37, 45, 46].into(), vec![9]),

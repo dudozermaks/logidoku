@@ -4,8 +4,8 @@ use crate::{
     action::Action,
     grid::Grid,
     methods::{
-        box_line_reduction::BoxLineReduction, fishes::Fishes, hidden_n::HiddenN, naked_n::NakedN,
-        pointing_ns::PointingNs, simple_coloring::SimpleColoring, Method,
+        box_line_reduction::BoxLineReduction, fishes::Fishes, hidden_n::Hidden, naked_n::Naked,
+        pointing_ns::Pointing, simple_coloring::SimpleColoring, Method,
     },
 };
 
@@ -19,24 +19,24 @@ impl Solver {
         Solver {
             methods: vec![
                 // Original sudokuwiki.org order
-                Box::new(NakedN { n: 1 }),
+                Box::new(Naked::Single),
                 //
-                Box::new(HiddenN { n: 1 }),
+                Box::new(Hidden::Single),
                 //
-                Box::new(NakedN { n: 2 }),
-                Box::new(NakedN { n: 3 }),
+                Box::new(Naked::Pair),
+                Box::new(Naked::Triple),
                 //
-                Box::new(HiddenN { n: 2 }),
-                Box::new(HiddenN { n: 3 }),
+                Box::new(Hidden::Pair),
+                Box::new(Hidden::Triple),
                 //
-                Box::new(NakedN { n: 4 }),
-                Box::new(HiddenN { n: 4 }),
+                Box::new(Naked::Quad),
+                Box::new(Hidden::Quad),
                 //
-                Box::new(PointingNs { n: 2 }),
-                Box::new(PointingNs { n: 3 }),
+                Box::new(Pointing::Pair),
+                Box::new(Pointing::Triple),
                 //
-                Box::new(BoxLineReduction { n: 2 }),
-                Box::new(BoxLineReduction { n: 3 }),
+                Box::new(BoxLineReduction::Pair),
+                Box::new(BoxLineReduction::Triple),
                 //
                 Box::new(Fishes::XWing),
                 //

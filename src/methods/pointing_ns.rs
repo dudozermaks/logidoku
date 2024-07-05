@@ -2,20 +2,25 @@ use crate::{action::Action, figure::Figure};
 
 use super::Method;
 
-pub struct PointingNs {
-    pub n: u8,
+pub enum Pointing {
+    Pair,
+    Triple
 }
 
-impl Method for PointingNs {
+impl Method for Pointing {
     fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<crate::action::Action> {
         let mut res = vec![];
+        let dimension = match self {
+            Pointing::Pair => 2,
+            Pointing::Triple => 3,
+        };
 
         for sqr_number in 0..9 {
             let sqr = Figure::sqr(sqr_number);
             let pencilmarks_info = grid.pencilmarks_info(sqr);
 
             for (pencilmark, positions) in pencilmarks_info {
-                if positions.len() == self.n.into() {
+                if positions.len() == dimension {
                     let pencilmarks_figure: Figure = positions.into();
 
                     let on_same_row = pencilmarks_figure.is_on_the_same_row();
@@ -52,7 +57,7 @@ mod tests {
     fn pointing_pairs() {
         test_method(
             "032006100410000000000901000500090004060000071300020005000508000000000519057009860",
-            PointingNs { n: 2 },
+            Pointing::Pair,
             vec![
                 Action::RemovePencilmarks(vec![2, 11, 20, 38, 56, 65, 74].into(), vec![1]),
                 Action::RemovePencilmarks(vec![3, 12, 21, 39, 57, 66, 75].into(), vec![1]),
@@ -73,7 +78,7 @@ mod tests {
     fn pointing_triples() {
         test_method(
             "930050000200630095856002000003180570005020980080005000000800159508210004000560008",
-            PointingNs { n: 3 },
+            Pointing::Triple,
             vec![
                 Action::RemovePencilmarks(vec![75, 76, 77, 78, 79, 80].into(), vec![1]),
                 Action::RemovePencilmarks(vec![0, 1, 2, 3, 4, 5].into(), vec![2]),
