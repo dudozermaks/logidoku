@@ -4,6 +4,7 @@ use crate::{action::Action, figure::Figure};
 
 use super::Method;
 
+#[derive(Clone)]
 pub enum Pointing {
     Pair,
     Triple,

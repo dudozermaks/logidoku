@@ -9,6 +9,7 @@ use crate::{
     },
 };
 
+#[derive(Clone)]
 pub struct Solver {
     methods: Vec<Box<dyn Method>>,
 }

@@ -161,6 +161,7 @@ impl PartialEq for ChainLink {
     }
 }
 
+#[derive(Clone)]
 pub struct SimpleColoring;
 
 impl SimpleColoring {
