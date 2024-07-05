@@ -23,8 +23,8 @@ impl Action {
         for i in figure.clone() {
             if let Cell::Pencilmarks(old_pencilmarks) = &grid[i] {
                 let new_pencilmarks = old_pencilmarks
-                    .into_iter()
-                    .filter(|p| pencilmarks.contains(&p) == preserve)
+                    .iter()
+                    .filter(|p| pencilmarks.contains(p) == preserve)
                     .cloned()
                     .collect();
 

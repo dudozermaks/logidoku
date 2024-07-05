@@ -34,7 +34,7 @@ impl Candidate {
 
         for candidate in candidates {
             for row in &candidate.rows {
-                if let Some(this_row_count) = all_rows.get_mut(&row) {
+                if let Some(this_row_count) = all_rows.get_mut(row) {
                     *this_row_count += 1;
                 } else {
                     all_rows.insert(*row, 1);
@@ -43,7 +43,7 @@ impl Candidate {
         }
 
         if all_rows.len() == dimensions && all_rows.iter().all(|(_, count)| count >= &2) {
-            return Some(all_rows.into_iter().map(|(row, _)| row).collect());
+            return Some(all_rows.into_keys().collect());
         }
 
         None
@@ -82,12 +82,12 @@ impl Fishes {
 
             let figure_candidates = info.iter().filter_map(|(pencilmark, positions)| {
                 if (2..=dimensions).contains(&positions.len()) {
-                    return Some((
+                    Some((
                         *pencilmark,
                         Candidate::new(positions.clone().into(), rotated),
-                    ));
+                    ))
                 } else {
-                    return None;
+                    None
                 }
             });
 

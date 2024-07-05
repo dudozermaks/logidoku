@@ -20,13 +20,13 @@ impl PosInfo {
     }
 }
 
-impl Into<PosInfo> for usize {
-    fn into(self) -> PosInfo {
+impl From<usize> for PosInfo {
+    fn from(val: usize) -> Self {
         PosInfo {
-            row: Figure::row_of(self),
-            col: Figure::col_of(self),
-            sqr: Figure::sqr_of(self),
-            neighbours: Figure::neighbours(self),
+            row: Figure::row_of(val),
+            col: Figure::col_of(val),
+            sqr: Figure::sqr_of(val),
+            neighbours: Figure::neighbours(val),
         }
     }
 }
@@ -75,7 +75,7 @@ impl ChainLink {
     }
 
     fn get_chain(&self, grid: &Grid) -> Vec<Self> {
-        let mut res: HashSet<ChainLink> = HashSet::from_iter(self.get_next(grid).into_iter());
+        let mut res: HashSet<ChainLink> = HashSet::from_iter(self.get_next(grid));
         res.insert(self.clone());
 
         let mut stack = res.clone();
@@ -88,7 +88,7 @@ impl ChainLink {
                     .get_next(grid)
                     .into_iter()
                     // before extending new stack, removing every duplicate, already inserted in res,
-                    .filter(|link| !res.contains(&link));
+                    .filter(|link| !res.contains(link));
 
                 new_stack.extend(next_links);
             }
@@ -101,7 +101,7 @@ impl ChainLink {
     }
 
     fn generate_info(&mut self) {
-        if self.info == None {
+        if self.info.is_none() {
             self.info = Some(self.pos.into());
         }
     }

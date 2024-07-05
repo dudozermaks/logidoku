@@ -48,7 +48,7 @@ impl Grid {
             }
         }
 
-        return res;
+        res
     }
 
     /// Returns `true` if every cell in grid is `Number`

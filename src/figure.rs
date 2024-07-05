@@ -54,7 +54,7 @@ impl Figure {
         let col = Self::col_of(i);
         let sqr = Self::sqr_of(i);
 
-        Ok(Figure::row(row as u8) + Figure::col(col as u8) + Figure::sqr(sqr as u8))
+        Ok(Figure::row(row) + Figure::col(col) + Figure::sqr(sqr))
     }
 
     /// Panics if n > 8
@@ -253,7 +253,7 @@ impl IntoIterator for Figure {
 impl From<Vec<usize>> for Figure {
     fn from(value: Vec<usize>) -> Self {
         Figure {
-            positions: BTreeSet::from_iter(value.into_iter()),
+            positions: BTreeSet::from_iter(value),
         }
     }
 }
