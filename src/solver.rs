@@ -11,7 +11,7 @@ use crate::{
 
 #[derive(Clone)]
 pub struct Solver {
-    methods: Vec<Box<dyn Method>>,
+    methods: Vec<(Box<dyn Method>, bool)>,
 }
 
 impl Solver {
@@ -20,38 +20,42 @@ impl Solver {
         Solver {
             methods: vec![
                 // Original sudokuwiki.org order
-                Box::new(Naked::Single),
+                (Box::new(Naked::Single), true),
                 //
-                Box::new(Hidden::Single),
+                (Box::new(Hidden::Single), true),
                 //
-                Box::new(Naked::Pair),
-                Box::new(Naked::Triple),
+                (Box::new(Naked::Pair), true),
+                (Box::new(Naked::Triple), true),
                 //
-                Box::new(Hidden::Pair),
-                Box::new(Hidden::Triple),
+                (Box::new(Hidden::Pair), true),
+                (Box::new(Hidden::Triple), true),
                 //
-                Box::new(Naked::Quad),
-                Box::new(Hidden::Quad),
+                (Box::new(Naked::Quad), true),
+                (Box::new(Hidden::Quad), true),
                 //
-                Box::new(Pointing::Pair),
-                Box::new(Pointing::Triple),
+                (Box::new(Pointing::Pair), true),
+                (Box::new(Pointing::Triple), true),
                 //
-                Box::new(BoxLineReduction::Pair),
-                Box::new(BoxLineReduction::Triple),
+                (Box::new(BoxLineReduction::Pair), true),
+                (Box::new(BoxLineReduction::Triple), true),
                 //
-                Box::new(Fishes::XWing),
+                (Box::new(Fishes::XWing), true),
                 //
-                Box::new(SimpleColoring {}),
+                (Box::new(SimpleColoring {}), true),
             ],
         }
     }
 
-    /// Goes through all methods (in order).
+    /// Goes through all enabled methods (in order).
     /// If `stop_after_first` is true: returns Vec of helpful actions from every method.
     /// Else: returns helpful applications from the first applicable method.
     pub fn take_step(&self, grid: &Grid, stop_after_first: bool) -> Vec<Action> {
         let mut applications = vec![];
-        for method in &self.methods {
+        for (method, enabled) in &self.methods {
+            if !enabled {
+                continue;
+            }
+
             let method_applications = method.get_all_helpful_applications(grid);
 
             if !method_applications.is_empty() {
@@ -66,9 +70,14 @@ impl Solver {
         applications
     }
 
-    /// Returns all methods.
-    pub fn methods(&self) -> &Vec<Box<dyn Method>> {
+    /// Returns methods and bool, indicating whether given method is enabled.
+    pub fn methods(&self) -> &Vec<(Box<dyn Method>, bool)> {
         &self.methods
+    }
+
+    /// Enables method at given position.
+    pub fn toggle(&mut self, index: usize, state: bool) {
+        self.methods[index].1 = state;
     }
 }
 
@@ -80,7 +89,6 @@ impl PartialEq for Solver {
             .all(|(a, b)| a.type_id() == b.type_id())
     }
 }
-impl Eq for Solver {}
 
 #[cfg(test)]
 mod tests {
