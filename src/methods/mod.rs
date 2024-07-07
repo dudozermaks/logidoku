@@ -6,13 +6,13 @@ pub mod pointing_ns;
 pub mod simple_coloring;
 
 use dyn_clone::DynClone;
-use std::{fmt::Display, str::FromStr};
+use std::{fmt::{Display, Debug}, str::FromStr};
 
 use crate::{action::Action, grid::Grid};
 
 /// Methods follow the definition from https://sudokuwiki.org, if it is avalible
 /// for the given method.
-pub trait Method: Display + DynClone {
+pub trait Method: Display + DynClone + Debug {
     fn get_all_applications(&self, grid: &Grid) -> Vec<Action>;
     fn get_all_helpful_applications(&self, grid: &Grid) -> Vec<Action> {
         self.get_all_applications(grid)

@@ -50,7 +50,7 @@ impl Candidate {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Fishes {
     XWing,
     Swordfish,

@@ -4,7 +4,7 @@ use crate::{action::Action, cell::Cell, figure::Figure};
 
 use super::Method;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Naked {
     Single,
     Pair,
