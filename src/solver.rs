@@ -75,9 +75,16 @@ impl Solver {
         &self.methods
     }
 
-    /// Enables method at given position.
-    pub fn toggle(&mut self, index: usize, state: bool) {
+    /// Enables or disables method at given position.
+    pub fn set_state(&mut self, index: usize, state: bool) {
         self.methods[index].1 = state;
+    }
+
+    /// Toggles the method at given position.
+    pub fn toggle(&mut self, index: usize) {
+        let current_state = self.methods[index].1;
+
+        self.set_state(index, !current_state);
     }
 }
 
