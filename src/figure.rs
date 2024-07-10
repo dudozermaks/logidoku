@@ -206,6 +206,11 @@ impl Figure {
     pub fn len(&self) -> usize {
         self.positions.len()
     }
+
+    /// Returns true if figure has no positions in it.
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 impl Add for Figure {

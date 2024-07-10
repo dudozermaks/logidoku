@@ -20,7 +20,7 @@ impl Action {
     fn remove_or_preserve_pencilmarks(
         grid: &mut crate::grid::Grid,
         figure: &Figure,
-        pencilmarks: &Vec<u8>,
+        pencilmarks: &[u8],
         preserve: bool,
     ) {
         for i in figure.clone() {
