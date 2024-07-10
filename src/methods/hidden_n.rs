@@ -24,7 +24,10 @@ impl Hidden {
                 .iter()
                 .filter_map(|(pencilmark, positions)| {
                     if positions.len() == 1 {
-                        Some(Action::PlaceNumber(positions[0], *pencilmark))
+                        Some(Action::PlaceNumber {
+                            position: positions[0],
+                            number: *pencilmark,
+                        })
                     } else {
                         None
                     }
@@ -65,10 +68,10 @@ impl Hidden {
                 pencilmarks.sort();
 
                 if pencilmarks.len() == dimension {
-                    res.insert(Action::PreservePencilmarks(
-                        lead_position.to_vec().into(),
+                    res.insert(Action::PreservePencilmarks {
+                        figure: lead_position.to_vec().into(),
                         pencilmarks,
-                    ));
+                    });
                 }
             }
         }
@@ -123,17 +126,50 @@ mod tests {
             "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
             Hidden::Single,
             vec![
-                Action::PlaceNumber(0, 7),
-                Action::PlaceNumber(3, 1),
-                Action::PlaceNumber(16, 1),
-                Action::PlaceNumber(20, 8),
-                Action::PlaceNumber(26, 4),
-                Action::PlaceNumber(36, 3),
-                Action::PlaceNumber(44, 9),
-                Action::PlaceNumber(54, 8),
-                Action::PlaceNumber(59, 7),
-                Action::PlaceNumber(60, 4),
-                Action::PlaceNumber(80, 1),
+                Action::PlaceNumber {
+                    position: 0,
+                    number: 7,
+                },
+                Action::PlaceNumber {
+                    position: 3,
+                    number: 1,
+                },
+                Action::PlaceNumber {
+                    position: 16,
+                    number: 1,
+                },
+                Action::PlaceNumber {
+                    position: 20,
+                    number: 8,
+                },
+                Action::PlaceNumber {
+                    position: 26,
+                    number: 4,
+                },
+                Action::PlaceNumber {
+                    position: 36,
+                    number: 3,
+                },
+                Action::PlaceNumber {
+                    position: 44,
+                    number: 9,
+                },
+                Action::PlaceNumber {
+                    position: 54,
+                    number: 8,
+                },
+                Action::PlaceNumber {
+                    position: 59,
+                    number: 7,
+                },
+                Action::PlaceNumber {
+                    position: 60,
+                    number: 4,
+                },
+                Action::PlaceNumber {
+                    position: 80,
+                    number: 1,
+                },
             ],
         );
     }
@@ -144,11 +180,26 @@ mod tests {
             "720408030080000047401076802810739000000851000000264080209680413340000008168943275",
             Hidden::Pair,
             vec![
-                Action::PreservePencilmarks(vec![29, 38].into(), vec![2, 4]),
-                Action::PreservePencilmarks(vec![42, 51].into(), vec![3, 7]),
-                Action::PreservePencilmarks(vec![55, 59].into(), vec![5, 7]),
-                Action::PreservePencilmarks(vec![55, 65].into(), vec![5, 7]),
-                Action::PreservePencilmarks(vec![69, 70].into(), vec![6, 9]),
+                Action::PreservePencilmarks {
+                    figure: vec![29, 38].into(),
+                    pencilmarks: vec![2, 4],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![42, 51].into(),
+                    pencilmarks: vec![3, 7],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![55, 59].into(),
+                    pencilmarks: vec![5, 7],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![55, 65].into(),
+                    pencilmarks: vec![5, 7],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![69, 70].into(),
+                    pencilmarks: vec![6, 9],
+                },
             ],
         );
     }
@@ -159,11 +210,26 @@ mod tests {
             "000001030231090000065003100678924300103050006000136700009360570006019843300000000",
             Hidden::Triple,
             vec![
-                Action::PreservePencilmarks(vec![2, 47, 74].into(), vec![2, 4, 7]),
-                Action::PreservePencilmarks(vec![3, 6, 8].into(), vec![2, 5, 6]),
-                Action::PreservePencilmarks(vec![4, 22, 76].into(), vec![4, 7, 8]),
-                Action::PreservePencilmarks(vec![37, 42, 43].into(), vec![2, 4, 9]),
-                Action::PreservePencilmarks(vec![63, 64, 66].into(), vec![2, 5, 7]),
+                Action::PreservePencilmarks {
+                    figure: vec![2, 47, 74].into(),
+                    pencilmarks: vec![2, 4, 7],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![3, 6, 8].into(),
+                    pencilmarks: vec![2, 5, 6],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![4, 22, 76].into(),
+                    pencilmarks: vec![4, 7, 8],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![37, 42, 43].into(),
+                    pencilmarks: vec![2, 4, 9],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![63, 64, 66].into(),
+                    pencilmarks: vec![2, 5, 7],
+                },
             ],
         );
     }
@@ -173,12 +239,30 @@ mod tests {
             "901500046425090081860010020502000000019000460600000002196040253200060817000001694",
             Hidden::Quad,
             vec![
-                Action::PreservePencilmarks(vec![1, 4, 5, 6].into(), vec![2, 3, 7, 8]),
-                Action::PreservePencilmarks(vec![20, 47, 65, 74].into(), vec![3, 4, 7, 8]),
-                Action::PreservePencilmarks(vec![28, 36, 46, 47].into(), vec![3, 4, 7, 8]),
-                Action::PreservePencilmarks(vec![30, 32, 48, 50].into(), vec![1, 4, 6, 9]),
-                Action::PreservePencilmarks(vec![64, 65, 66, 68].into(), vec![3, 4, 5, 9]),
-                Action::PreservePencilmarks(vec![66, 68, 75, 76].into(), vec![2, 3, 5, 9]),
+                Action::PreservePencilmarks {
+                    figure: vec![1, 4, 5, 6].into(),
+                    pencilmarks: vec![2, 3, 7, 8],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![20, 47, 65, 74].into(),
+                    pencilmarks: vec![3, 4, 7, 8],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![28, 36, 46, 47].into(),
+                    pencilmarks: vec![3, 4, 7, 8],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![30, 32, 48, 50].into(),
+                    pencilmarks: vec![1, 4, 6, 9],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![64, 65, 66, 68].into(),
+                    pencilmarks: vec![3, 4, 5, 9],
+                },
+                Action::PreservePencilmarks {
+                    figure: vec![66, 68, 75, 76].into(),
+                    pencilmarks: vec![2, 3, 5, 9],
+                },
             ],
         )
     }

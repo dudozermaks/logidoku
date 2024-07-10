@@ -8,7 +8,7 @@ impl Cell {
     pub fn all_pencilmarks() -> Cell {
         Cell::Pencilmarks(Vec::from([1, 2, 3, 4, 5, 6, 7, 8, 9]))
     }
-    
+
     pub fn is_number(&self) -> bool {
         match self {
             Cell::Number(_) => true,
@@ -27,15 +27,17 @@ impl Cell {
     pub fn number(&self) -> u8 {
         match self {
             Cell::Number(n) => *n,
-            Cell::Pencilmarks(_) => panic!("{}", "called `Cell::number()` on a `Pencilmarks` value")
+            Cell::Pencilmarks(_) => {
+                panic!("{}", "called `Cell::number()` on a `Pencilmarks` value")
+            }
         }
     }
 
-    /// Panics if `self` is `Number` 
+    /// Panics if `self` is `Number`
     pub fn pencilmarks(&self) -> Vec<u8> {
         match self {
             Cell::Number(_) => panic!("{}", "called `Cell::pencilmarks()` on a `Number` value"),
-            Cell::Pencilmarks(p) => p.to_vec()
+            Cell::Pencilmarks(p) => p.to_vec(),
         }
     }
 }
@@ -60,10 +62,10 @@ mod tests {
     fn is_pencilmarks_or_number() {
         let pencilmarks = Cell::Pencilmarks([1, 2, 3].to_vec());
         let number = Cell::Number(1);
-        
+
         assert!(pencilmarks.is_pencilmarks());
         assert!(!pencilmarks.is_number());
-        
+
         assert!(!number.is_pencilmarks());
         assert!(number.is_number());
     }

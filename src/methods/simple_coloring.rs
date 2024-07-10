@@ -126,10 +126,10 @@ impl ChainLink {
             }
         }
 
-        Some(Action::RemovePencilmarks(
-            positions_to_remove_from.into(),
-            vec![self.number],
-        ))
+        Some(Action::RemovePencilmarks {
+            figure: positions_to_remove_from.into(),
+            pencilmarks: vec![self.number],
+        })
     }
 
     fn rule4(&self, other: &ChainLink) -> Option<Action> {
@@ -146,12 +146,12 @@ impl ChainLink {
             return None;
         }
 
-        Some(Action::RemovePencilmarks(
+        Some(Action::RemovePencilmarks {
             // I can't think of an edge case, where you need to substract not only this 2
             // positions, but the full chain's positions. Maybe I'm wrong here.
-            intersection - vec![self.pos, other.pos].into(),
-            vec![self.number],
-        ))
+            figure: intersection - vec![self.pos, other.pos].into(),
+            pencilmarks: vec![self.number],
+        })
     }
 }
 
@@ -257,41 +257,56 @@ mod tests {
         test(
             "200041056405602010016095004350129640142060590069504001584216379920408165601950482",
             vec![
-                Action::RemovePencilmarks(vec![4, 13, 22, 30, 39, 48].into(), vec![3]),
-                Action::RemovePencilmarks(vec![13, 53].into(), vec![3]),
-                Action::RemovePencilmarks(vec![17, 40].into(), vec![8]),
-                Action::RemovePencilmarks(vec![26, 39].into(), vec![3]),
+                Action::RemovePencilmarks {
+                    figure: vec![4, 13, 22, 30, 39, 48].into(),
+                    pencilmarks: vec![3],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![13, 53].into(),
+                    pencilmarks: vec![3],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![17, 40].into(),
+                    pencilmarks: vec![8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![26, 39].into(),
+                    pencilmarks: vec![3],
+                },
             ],
         );
 
         test(
             "400100000002000004008090100006403800080000010007906200003070000200000605000002001",
             vec![
-                Action::RemovePencilmarks(
-                    vec![4, 13, 22, 30, 32, 39, 40, 41, 48, 50, 58, 67, 76].into(),
-                    vec![1],
-                ),
-                Action::RemovePencilmarks(
-                    vec![4, 13, 22, 31, 40, 49, 57, 58, 59, 66, 68, 75, 77].into(),
-                    vec![4],
-                ),
-                Action::RemovePencilmarks(
-                    vec![5, 14, 23, 32, 41, 50, 57, 58, 66, 67, 75, 76, 77].into(),
-                    vec![1],
-                ),
-                Action::RemovePencilmarks(vec![13, 22, 31, 49, 58, 67, 76].into(), vec![2]),
-                Action::RemovePencilmarks(
-                    vec![27, 28, 29, 30, 31, 32, 33, 42, 43, 44, 51, 52, 53].into(),
-                    vec![7],
-                ),
-                Action::RemovePencilmarks(
-                    vec![30, 31, 32, 36, 37, 38, 40, 42, 43, 44, 48, 49, 50].into(),
-                    vec![7],
-                ),
-                Action::RemovePencilmarks(
-                    vec![30, 31, 32, 36, 37, 38, 41, 42, 43, 44, 48, 49, 50].into(),
-                    vec![2],
-                ),
+                Action::RemovePencilmarks {
+                    figure: vec![4, 13, 22, 30, 32, 39, 40, 41, 48, 50, 58, 67, 76].into(),
+                    pencilmarks: vec![1],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![4, 13, 22, 31, 40, 49, 57, 58, 59, 66, 68, 75, 77].into(),
+                    pencilmarks: vec![4],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![5, 14, 23, 32, 41, 50, 57, 58, 66, 67, 75, 76, 77].into(),
+                    pencilmarks: vec![1],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![13, 22, 31, 49, 58, 67, 76].into(),
+                    pencilmarks: vec![2],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![27, 28, 29, 30, 31, 32, 33, 42, 43, 44, 51, 52, 53].into(),
+                    pencilmarks: vec![7],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 31, 32, 36, 37, 38, 40, 42, 43, 44, 48, 49, 50].into(),
+                    pencilmarks: vec![7],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 31, 32, 36, 37, 38, 41, 42, 43, 44, 48, 49, 50].into(),
+                    pencilmarks: vec![2],
+                },
             ],
         );
 
@@ -305,28 +320,57 @@ mod tests {
         grid.set_pencilmarks(49, vec![3, 8]);
         grid.set_pencilmarks(44, vec![3, 8]);
 
-
         let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid);
         actions.sort();
 
         let mut predictions = vec![
-            Action::RemovePencilmarks(vec![26, 39].into(), vec![3]),
-            Action::RemovePencilmarks(vec![13, 53].into(), vec![3]),
-            Action::RemovePencilmarks(vec![4, 13, 22, 30, 39, 48].into(), vec![3]),
-
-            Action::RemovePencilmarks(vec![10, 76].into(), vec![7]),
-            Action::RemovePencilmarks(vec![15, 49].into(), vec![7]),
-            Action::RemovePencilmarks(vec![18, 48].into(), vec![7]),
-            Action::RemovePencilmarks(vec![21, 36].into(), vec![7]),
-            Action::RemovePencilmarks(vec![9, 10, 11, 12, 14, 15, 16].into(), vec![7]),
-            Action::RemovePencilmarks(vec![9, 10, 11, 21, 22, 23].into(), vec![7]),
+            Action::RemovePencilmarks {
+                figure: vec![26, 39].into(),
+                pencilmarks: vec![3],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![13, 53].into(),
+                pencilmarks: vec![3],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![4, 13, 22, 30, 39, 48].into(),
+                pencilmarks: vec![3],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![10, 76].into(),
+                pencilmarks: vec![7],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![15, 49].into(),
+                pencilmarks: vec![7],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![18, 48].into(),
+                pencilmarks: vec![7],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![21, 36].into(),
+                pencilmarks: vec![7],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![9, 10, 11, 12, 14, 15, 16].into(),
+                pencilmarks: vec![7],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![9, 10, 11, 21, 22, 23].into(),
+                pencilmarks: vec![7],
+            },
             // Rule 2
-            Action::RemovePencilmarks(vec![17, 18, 21, 29, 41, 51, 67, 73].into(), vec![7]),
-
-            Action::RemovePencilmarks(vec![17, 40].into(), vec![8]),
+            Action::RemovePencilmarks {
+                figure: vec![17, 18, 21, 29, 41, 51, 67, 73].into(),
+                pencilmarks: vec![7],
+            },
+            Action::RemovePencilmarks {
+                figure: vec![17, 40].into(),
+                pencilmarks: vec![8],
+            },
         ];
         predictions.sort();
-
 
         assert_eq!(actions, predictions);
     }

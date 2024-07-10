@@ -9,7 +9,7 @@ pub enum Naked {
     Single,
     Pair,
     Triple,
-    Quad
+    Quad,
 }
 
 impl Naked {
@@ -19,7 +19,10 @@ impl Naked {
         for i in Figure::all_cells() {
             if let Cell::Pencilmarks(pencilmarks) = &grid[i] {
                 if pencilmarks.len() == 1 {
-                    res.push(Action::PlaceNumber(i, pencilmarks[0]))
+                    res.push(Action::PlaceNumber {
+                        position: i,
+                        number: pencilmarks[0],
+                    })
                 }
             }
         }
@@ -57,10 +60,10 @@ impl Naked {
                 }
 
                 if possible_positions.len() == dimension {
-                    res.push(Action::RemovePencilmarks(
-                        f.clone() - possible_positions.clone().into(),
-                        lead_set.to_vec(),
-                    ));
+                    res.push(Action::RemovePencilmarks {
+                        figure: f.clone() - possible_positions.clone().into(),
+                        pencilmarks: lead_set.to_vec(),
+                    });
                 }
             }
         }
@@ -68,7 +71,7 @@ impl Naked {
     }
 }
 
-impl Display for Naked{
+impl Display for Naked {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -111,13 +114,25 @@ mod tests {
         test_method(
             "401003050000605084895407136030060405900050300050001200240500007009000500500092000",
             Naked::Single,
-            vec![Action::PlaceNumber(22, 2)],
+            vec![Action::PlaceNumber {
+                position: 22,
+                number: 2,
+            }],
         );
 
         test_method(
             "401003050000605084895427136030060405900050300050001200240500007009000500500092000",
             Naked::Single,
-            vec![Action::PlaceNumber(4, 8), Action::PlaceNumber(13, 1)],
+            vec![
+                Action::PlaceNumber {
+                    position: 4,
+                    number: 8,
+                },
+                Action::PlaceNumber {
+                    position: 13,
+                    number: 1,
+                },
+            ],
         );
     }
 
@@ -127,14 +142,38 @@ mod tests {
             "400000938032094100095300240370609004529001673604703090957008300003900400240030709",
             Naked::Pair,
             vec![
-                Action::RemovePencilmarks(vec![0, 3, 4, 5, 6, 7, 8].into(), vec![1, 6]),
-                Action::RemovePencilmarks(vec![0, 9, 10, 11, 18, 19, 20].into(), vec![1, 6]),
-                Action::RemovePencilmarks(vec![18, 19, 20, 21, 22, 24, 25].into(), vec![6, 7]),
-                Action::RemovePencilmarks(vec![27, 28, 36, 37, 38, 45, 47].into(), vec![1, 8]),
-                Action::RemovePencilmarks(vec![36, 37, 38, 41, 42, 43, 44].into(), vec![4, 8]),
-                Action::RemovePencilmarks(vec![30, 31, 32, 41, 48, 49, 50].into(), vec![4, 8]),
-                Action::RemovePencilmarks(vec![34, 35, 42, 43, 44, 52, 53].into(), vec![5, 8]),
-                Action::RemovePencilmarks(vec![6, 15, 24, 42, 60, 69, 78].into(), vec![5, 8]),
+                Action::RemovePencilmarks {
+                    figure: vec![0, 3, 4, 5, 6, 7, 8].into(),
+                    pencilmarks: vec![1, 6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![0, 9, 10, 11, 18, 19, 20].into(),
+                    pencilmarks: vec![1, 6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![18, 19, 20, 21, 22, 24, 25].into(),
+                    pencilmarks: vec![6, 7],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![27, 28, 36, 37, 38, 45, 47].into(),
+                    pencilmarks: vec![1, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![36, 37, 38, 41, 42, 43, 44].into(),
+                    pencilmarks: vec![4, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 31, 32, 41, 48, 49, 50].into(),
+                    pencilmarks: vec![4, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![34, 35, 42, 43, 44, 52, 53].into(),
+                    pencilmarks: vec![5, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![6, 15, 24, 42, 60, 69, 78].into(),
+                    pencilmarks: vec![5, 8],
+                },
             ],
         );
     }
@@ -145,12 +184,30 @@ mod tests {
             "294513006600842319300697254000056000040080060000470000730164005900735001400928637",
             Naked::Triple,
             vec![
-                Action::RemovePencilmarks(vec![0, 9, 18, 54, 63, 72].into(), vec![1, 5, 8]),
-                Action::RemovePencilmarks(vec![28, 29, 37, 38, 46, 47].into(), vec![1, 5, 8]),
-                Action::RemovePencilmarks(vec![33, 34, 42, 43, 51, 52].into(), vec![2, 3, 8]),
-                Action::RemovePencilmarks(vec![54, 55, 57, 58, 59, 62].into(), vec![2, 8, 9]),
-                Action::RemovePencilmarks(vec![54, 55, 63, 72, 73, 74].into(), vec![2, 6, 8]),
-                Action::RemovePencilmarks(vec![8, 17, 26, 62, 71, 80].into(), vec![2, 3, 8]),
+                Action::RemovePencilmarks {
+                    figure: vec![0, 9, 18, 54, 63, 72].into(),
+                    pencilmarks: vec![1, 5, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![28, 29, 37, 38, 46, 47].into(),
+                    pencilmarks: vec![1, 5, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![33, 34, 42, 43, 51, 52].into(),
+                    pencilmarks: vec![2, 3, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![54, 55, 57, 58, 59, 62].into(),
+                    pencilmarks: vec![2, 8, 9],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![54, 55, 63, 72, 73, 74].into(),
+                    pencilmarks: vec![2, 6, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![8, 17, 26, 62, 71, 80].into(),
+                    pencilmarks: vec![2, 3, 8],
+                },
             ],
         );
     }
@@ -161,8 +218,14 @@ mod tests {
             "000030086000020040090078520371856294900142375400397618200703859039205467700904132",
             Naked::Quad,
             vec![
-                Action::RemovePencilmarks(vec![27, 36, 45, 54, 72].into(), vec![1, 5, 6, 8]),
-                Action::RemovePencilmarks(vec![1, 2, 11, 19, 20].into(), vec![1, 5, 6, 8]),
+                Action::RemovePencilmarks {
+                    figure: vec![27, 36, 45, 54, 72].into(),
+                    pencilmarks: vec![1, 5, 6, 8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![1, 2, 11, 19, 20].into(),
+                    pencilmarks: vec![1, 5, 6, 8],
+                },
             ],
         );
     }

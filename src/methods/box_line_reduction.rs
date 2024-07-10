@@ -25,10 +25,10 @@ impl BoxLineReduction {
                 let pencilmarks_figure: Figure = positions.into();
 
                 if let Some(sqr) = pencilmarks_figure.is_on_the_same_sqr() {
-                    res.push(Action::RemovePencilmarks(
-                        Figure::sqr(sqr) - pencilmarks_figure,
-                        vec![pencilmark],
-                    ))
+                    res.push(Action::RemovePencilmarks {
+                        figure: Figure::sqr(sqr) - pencilmarks_figure,
+                        pencilmarks: vec![pencilmark],
+                    })
                 }
             }
         }
@@ -79,19 +79,58 @@ mod tests {
             "016007803090800000870001260048000300650009082039000650060900020080002936924600510",
             BoxLineReduction::Pair,
             vec![
-                Action::RemovePencilmarks(vec![1, 2, 10, 11, 18, 19, 20].into(), vec![4]),
-                Action::RemovePencilmarks(vec![3, 4, 5, 12, 21, 22, 23].into(), vec![6]),
-                Action::RemovePencilmarks(vec![3, 5, 12, 13, 14, 21, 23].into(), vec![9]),
-                Action::RemovePencilmarks(vec![6, 7, 8, 15, 16, 24, 25].into(), vec![5]),
-                Action::RemovePencilmarks(vec![6, 7, 8, 16, 24, 25, 26].into(), vec![1]),
-                Action::RemovePencilmarks(vec![6, 8, 15, 17, 24, 25, 26].into(), vec![4]),
-                Action::RemovePencilmarks(vec![30, 31, 32, 39, 40, 41, 48].into(), vec![8]),
-                Action::RemovePencilmarks(vec![30, 31, 32, 41, 48, 49, 50].into(), vec![3]),
-                Action::RemovePencilmarks(vec![30, 39, 40, 41, 48, 49, 50].into(), vec![6]),
-                Action::RemovePencilmarks(vec![33, 42, 43, 44, 51, 52, 53].into(), vec![9]),
-                Action::RemovePencilmarks(vec![57, 58, 59, 66, 67, 68, 75].into(), vec![3]),
-                Action::RemovePencilmarks(vec![57, 58, 59, 68, 75, 76, 77].into(), vec![4]),
-                Action::RemovePencilmarks(vec![60, 61, 69, 70, 71, 78, 79].into(), vec![8]),
+                Action::RemovePencilmarks {
+                    figure: vec![1, 2, 10, 11, 18, 19, 20].into(),
+                    pencilmarks: vec![4],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![3, 4, 5, 12, 21, 22, 23].into(),
+                    pencilmarks: vec![6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![3, 5, 12, 13, 14, 21, 23].into(),
+                    pencilmarks: vec![9],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![6, 7, 8, 15, 16, 24, 25].into(),
+                    pencilmarks: vec![5],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![6, 7, 8, 16, 24, 25, 26].into(),
+                    pencilmarks: vec![1],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![6, 8, 15, 17, 24, 25, 26].into(),
+                    pencilmarks: vec![4],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 31, 32, 39, 40, 41, 48].into(),
+                    pencilmarks: vec![8],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 31, 32, 41, 48, 49, 50].into(),
+                    pencilmarks: vec![3],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 39, 40, 41, 48, 49, 50].into(),
+                    pencilmarks: vec![6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![33, 42, 43, 44, 51, 52, 53].into(),
+                    pencilmarks: vec![9],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![57, 58, 59, 66, 67, 68, 75].into(),
+                    pencilmarks: vec![3],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![57, 58, 59, 68, 75, 76, 77].into(),
+                    pencilmarks: vec![4],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![60, 61, 69, 70, 71, 78, 79].into(),
+                    pencilmarks: vec![8],
+                },
             ],
         );
     }
@@ -101,12 +140,30 @@ mod tests {
             "020943715904000600750000040500480000200000453400352000042000081005004260090208504",
             BoxLineReduction::Triple,
             vec![
-                Action::RemovePencilmarks(vec![3, 4, 5, 21, 22, 23].into(), vec![7]),
-                Action::RemovePencilmarks(vec![27, 28, 36, 37, 45, 46].into(), vec![9]),
-                Action::RemovePencilmarks(vec![27, 29, 36, 38, 45, 47].into(), vec![6]),
-                Action::RemovePencilmarks(vec![55, 56, 64, 65, 73, 74].into(), vec![3]),
-                Action::RemovePencilmarks(vec![57, 59, 66, 68, 75, 77].into(), vec![3]),
-                Action::RemovePencilmarks(vec![66, 67, 68, 75, 76, 77].into(), vec![7]),
+                Action::RemovePencilmarks {
+                    figure: vec![3, 4, 5, 21, 22, 23].into(),
+                    pencilmarks: vec![7],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![27, 28, 36, 37, 45, 46].into(),
+                    pencilmarks: vec![9],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![27, 29, 36, 38, 45, 47].into(),
+                    pencilmarks: vec![6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![55, 56, 64, 65, 73, 74].into(),
+                    pencilmarks: vec![3],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![57, 59, 66, 68, 75, 77].into(),
+                    pencilmarks: vec![3],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![66, 67, 68, 75, 76, 77].into(),
+                    pencilmarks: vec![7],
+                },
             ],
         );
     }

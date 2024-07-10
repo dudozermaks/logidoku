@@ -2,15 +2,18 @@ use crate::{cell::Cell, figure::Figure};
 
 #[derive(Ord, Eq, PartialEq, PartialOrd, Debug, Clone)]
 pub enum Action {
-    /// 1. Position
-    /// 2. Number
-    PlaceNumber(usize, u8),
-    /// 1. Figure to remove from
-    /// 2. Pencilmarks to remove
-    RemovePencilmarks(Figure, Vec<u8>),
-    /// 1. Figure, in which to preserve
-    /// 2. Pencilmarks to preserve
-    PreservePencilmarks(Figure, Vec<u8>),
+    PlaceNumber {
+        position: usize,
+        number: u8,
+    },
+    RemovePencilmarks {
+        figure: Figure,
+        pencilmarks: Vec<u8>,
+    },
+    PreservePencilmarks {
+        figure: Figure,
+        pencilmarks: Vec<u8>,
+    },
 }
 
 impl Action {
@@ -34,13 +37,19 @@ impl Action {
     }
     pub fn apply_to_grid(&self, grid: &mut crate::grid::Grid) {
         match self {
-            Action::PlaceNumber(position, number) => {
+            Action::PlaceNumber { position, number } => {
                 grid.set_number(*position, *number);
             }
-            Action::RemovePencilmarks(figure, pencilmarks) => {
+            Action::RemovePencilmarks {
+                figure,
+                pencilmarks,
+            } => {
                 Self::remove_or_preserve_pencilmarks(grid, figure, pencilmarks, false);
             }
-            Action::PreservePencilmarks(figure, pencilmarks) => {
+            Action::PreservePencilmarks {
+                figure,
+                pencilmarks,
+            } => {
                 Self::remove_or_preserve_pencilmarks(grid, figure, pencilmarks, true);
             }
         }
@@ -50,8 +59,11 @@ impl Action {
     /// but, there is no such pencilmarks on this row: return false.
     pub fn is_helpful(&self, grid: &crate::grid::Grid) -> bool {
         match self {
-            Action::PlaceNumber(position, _) => grid[*position].is_pencilmarks(),
-            Action::RemovePencilmarks(figure, pencilmarks) => {
+            Action::PlaceNumber { position, .. } => grid[*position].is_pencilmarks(),
+            Action::RemovePencilmarks {
+                figure,
+                pencilmarks,
+            } => {
                 for i in figure.clone() {
                     if let Cell::Pencilmarks(cell_pencilmarks) = &grid[i] {
                         if pencilmarks.iter().any(|p| cell_pencilmarks.contains(p)) {
@@ -61,7 +73,10 @@ impl Action {
                 }
                 false
             }
-            Action::PreservePencilmarks(figure, pencilmarks) => {
+            Action::PreservePencilmarks {
+                figure,
+                pencilmarks,
+            } => {
                 for i in figure.clone() {
                     if let Cell::Pencilmarks(cell_pencilmarks) = &grid[i] {
                         if !cell_pencilmarks.iter().all(|p| pencilmarks.contains(p)) {
@@ -73,6 +88,14 @@ impl Action {
             }
         }
     }
+
+    // pub fn simplify(&mut self, grid: &crate::grid::Grid) {
+    // match self {
+    //     Action::PlaceNumber(_, _) => todo!(),
+    //     Action::RemovePencilmarks(_, _) => todo!(),
+    //     Action::PreservePencilmarks(_, _) => todo!(),
+    // }
+    // }
 }
 
 #[cfg(test)]
@@ -90,7 +113,10 @@ mod tests {
         )
         .unwrap();
 
-        let action = Action::PlaceNumber(2, 8);
+        let action = Action::PlaceNumber {
+            position: 2,
+            number: 8,
+        };
         action.apply_to_grid(&mut grid);
 
         let grid_should_be = Grid::from_str(
@@ -110,7 +136,10 @@ mod tests {
 
         let figure = vec![0, 3, 4, 5, 6, 7, 8].into();
 
-        let action = Action::RemovePencilmarks(figure, vec![1, 6]);
+        let action = Action::RemovePencilmarks {
+            figure,
+            pencilmarks: vec![1, 6],
+        };
         action.apply_to_grid(&mut grid);
 
         assert_eq!(grid[0], Cell::Number(4));
@@ -131,7 +160,10 @@ mod tests {
         )
         .unwrap();
 
-        let action = Action::PreservePencilmarks(vec![29, 38].into(), vec![2, 4]);
+        let action = Action::PreservePencilmarks {
+            figure: vec![29, 38].into(),
+            pencilmarks: vec![2, 4],
+        };
 
         action.apply_to_grid(&mut grid);
 
@@ -147,24 +179,42 @@ mod tests {
         .unwrap();
 
         {
-            let place = Action::PlaceNumber(1, 2);
+            let place = Action::PlaceNumber {
+                position: 1,
+                number: 2,
+            };
             assert!(!place.is_helpful(&grid));
 
-            let remove = Action::RemovePencilmarks(vec![0, 2].into(), vec![1, 2]);
+            let remove = Action::RemovePencilmarks {
+                figure: vec![0, 2].into(),
+                pencilmarks: vec![1, 2],
+            };
             assert!(!remove.is_helpful(&grid));
 
-            let preserve = Action::PreservePencilmarks(vec![0, 2].into(), vec![8, 6]);
+            let preserve = Action::PreservePencilmarks {
+                figure: vec![0, 2].into(),
+                pencilmarks: vec![8, 6],
+            };
             assert!(!preserve.is_helpful(&grid));
         }
 
         {
-            let place = Action::PlaceNumber(66, 1);
+            let place = Action::PlaceNumber {
+                position: 66,
+                number: 1,
+            };
             assert!(place.is_helpful(&grid));
 
-            let remove = Action::RemovePencilmarks(vec![9, 10, 11, 18, 19, 20].into(), vec![8, 6]);
+            let remove = Action::RemovePencilmarks {
+                figure: vec![9, 10, 11, 18, 19, 20].into(),
+                pencilmarks: vec![8, 6],
+            };
             assert!(remove.is_helpful(&grid));
 
-            let preserve = Action::PreservePencilmarks(vec![10, 20].into(), vec![1, 3]);
+            let preserve = Action::PreservePencilmarks {
+                figure: vec![10, 20].into(),
+                pencilmarks: vec![1, 3],
+            };
             assert!(preserve.is_helpful(&grid));
         }
     }

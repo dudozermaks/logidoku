@@ -115,10 +115,22 @@ mod tests {
 
             let mut actions = solver.take_step(&easiest_grid, true);
             let mut predictions = vec![
-                Action::PlaceNumber(2, 8),
-                Action::PlaceNumber(13, 5),
-                Action::PlaceNumber(66, 4),
-                Action::PlaceNumber(73, 3),
+                Action::PlaceNumber {
+                    position: 2,
+                    number: 8,
+                },
+                Action::PlaceNumber {
+                    position: 13,
+                    number: 5,
+                },
+                Action::PlaceNumber {
+                    position: 66,
+                    number: 4,
+                },
+                Action::PlaceNumber {
+                    position: 73,
+                    number: 3,
+                },
             ];
 
             actions.sort();
@@ -134,22 +146,34 @@ mod tests {
 
             let mut actions = solver.take_step(&multiple_actions_grid, false);
             let mut predictions = vec![
-                Action::PlaceNumber(44, 1),
-                Action::RemovePencilmarks(vec![0, 1, 2, 4, 6, 7, 8].into(), vec![6]),
-                Action::RemovePencilmarks(
-                    vec![0, 1, 2, 4, 6, 7, 8, 12, 13, 14, 21, 22, 23].into(),
-                    vec![6],
-                ),
-                Action::RemovePencilmarks(
-                    vec![6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26].into(),
-                    vec![6],
-                ),
-                Action::RemovePencilmarks(vec![6, 7, 8, 15, 24, 25, 26].into(), vec![6]),
-                Action::RemovePencilmarks(
-                    vec![30, 31, 32, 39, 40, 41, 45, 46, 47, 48, 51, 52, 53].into(),
-                    vec![1],
-                ),
-                Action::RemovePencilmarks(vec![30, 31, 32, 39, 40, 41, 48].into(), vec![1]),
+                Action::PlaceNumber {
+                    position: 44,
+                    number: 1,
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![0, 1, 2, 4, 6, 7, 8].into(),
+                    pencilmarks: vec![6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![0, 1, 2, 4, 6, 7, 8, 12, 13, 14, 21, 22, 23].into(),
+                    pencilmarks: vec![6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26].into(),
+                    pencilmarks: vec![6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![6, 7, 8, 15, 24, 25, 26].into(),
+                    pencilmarks: vec![6],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 31, 32, 39, 40, 41, 45, 46, 47, 48, 51, 52, 53].into(),
+                    pencilmarks: vec![1],
+                },
+                Action::RemovePencilmarks {
+                    figure: vec![30, 31, 32, 39, 40, 41, 48].into(),
+                    pencilmarks: vec![1],
+                },
             ];
 
             actions.sort();
