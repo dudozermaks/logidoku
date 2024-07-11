@@ -89,13 +89,44 @@ impl Action {
         }
     }
 
-    // pub fn simplify(&mut self, grid: &crate::grid::Grid) {
-    // match self {
-    //     Action::PlaceNumber(_, _) => todo!(),
-    //     Action::RemovePencilmarks(_, _) => todo!(),
-    //     Action::PreservePencilmarks(_, _) => todo!(),
-    // }
-    // }
+    /// Removes unnecessary positions from figure
+    pub fn simplify(&mut self, grid: &crate::grid::Grid) {
+        let simplify_pencilmarks = |figure: &mut Figure, pencilmarks: &Vec<u8>, remove: bool| -> Figure {
+            figure
+                .clone()
+                .into_iter()
+                .filter(|pos| {
+                    if let Cell::Pencilmarks(p) = &grid[*pos] {
+                        p.iter()
+                            .any(|cell_pencilmark| pencilmarks.contains(cell_pencilmark) == remove)
+                    } else {
+                        false
+                    }
+                })
+                .collect::<Vec<_>>()
+                .into()
+        };
+
+        match self {
+            // can't simplify this
+            Action::PlaceNumber {
+                position: _,
+                number: _,
+            } => (),
+            Action::RemovePencilmarks {
+                figure,
+                pencilmarks,
+            } => {
+                *figure = simplify_pencilmarks(figure, &pencilmarks, true);
+            }
+            Action::PreservePencilmarks {
+                figure,
+                pencilmarks,
+            } => {
+                *figure = simplify_pencilmarks(figure, &pencilmarks, false);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
