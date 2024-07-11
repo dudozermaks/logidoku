@@ -48,7 +48,7 @@ impl Solver {
 
     /// Goes through all enabled methods (in order).
     /// If `stop_after_first` is true: returns Vec of helpful actions from every method.
-    /// Else: returns helpful applications from the first applicable method.
+    /// Else: returns helpful and simplified applications from the first applicable method.
     pub fn take_step(&self, grid: &Grid, stop_after_first: bool) -> Vec<Action> {
         let mut applications = vec![];
         for (method, enabled) in &self.methods {
@@ -151,27 +151,27 @@ mod tests {
                     number: 1,
                 },
                 Action::RemovePencilmarks {
-                    figure: vec![0, 1, 2, 4, 6, 7, 8].into(),
+                    figure: vec![7, 8].into(),
                     pencilmarks: vec![6],
                 },
                 Action::RemovePencilmarks {
-                    figure: vec![0, 1, 2, 4, 6, 7, 8, 12, 13, 14, 21, 22, 23].into(),
+                    figure: vec![7, 8].into(),
                     pencilmarks: vec![6],
                 },
                 Action::RemovePencilmarks {
-                    figure: vec![6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26].into(),
+                    figure: vec![7, 8].into(),
                     pencilmarks: vec![6],
                 },
                 Action::RemovePencilmarks {
-                    figure: vec![6, 7, 8, 15, 24, 25, 26].into(),
+                    figure: vec![7, 8].into(),
                     pencilmarks: vec![6],
                 },
                 Action::RemovePencilmarks {
-                    figure: vec![30, 31, 32, 39, 40, 41, 45, 46, 47, 48, 51, 52, 53].into(),
+                    figure: vec![40, 41].into(),
                     pencilmarks: vec![1],
                 },
                 Action::RemovePencilmarks {
-                    figure: vec![30, 31, 32, 39, 40, 41, 48].into(),
+                    figure: vec![40, 41].into(),
                     pencilmarks: vec![1],
                 },
             ];

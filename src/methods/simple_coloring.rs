@@ -245,7 +245,7 @@ mod tests {
     fn test(grid: &str, mut predictions: Vec<Action>) {
         let grid = Grid::from_str(grid).unwrap();
 
-        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid);
+        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid, false);
         actions.sort();
         predictions.sort();
 
@@ -320,7 +320,7 @@ mod tests {
         grid.set_pencilmarks(49, vec![3, 8]);
         grid.set_pencilmarks(44, vec![3, 8]);
 
-        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid);
+        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid, false);
         actions.sort();
 
         let mut predictions = vec![
