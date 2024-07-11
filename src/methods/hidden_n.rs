@@ -121,7 +121,7 @@ mod tests {
     };
 
     #[test]
-    fn get_and_apply_single() {
+    fn hidden_single() {
         test_method(
             "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
             Hidden::Single,
@@ -175,7 +175,7 @@ mod tests {
     }
 
     #[test]
-    fn get_and_apply_pairs() {
+    fn hidden_pair() {
         test_method(
             "720408030080000047401076802810739000000851000000264080209680413340000008168943275",
             Hidden::Pair,
@@ -205,7 +205,7 @@ mod tests {
     }
 
     #[test]
-    fn get_and_apply_triples() {
+    fn hidden_triples() {
         test_method(
             "000001030231090000065003100678924300103050006000136700009360570006019843300000000",
             Hidden::Triple,
@@ -234,7 +234,7 @@ mod tests {
         );
     }
     #[test]
-    fn get_and_apply_quads() {
+    fn hidden_quads() {
         test_method(
             "901500046425090081860010020502000000019000460600000002196040253200060817000001694",
             Hidden::Quad,

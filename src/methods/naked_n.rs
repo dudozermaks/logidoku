@@ -110,7 +110,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn get_and_apply_single() {
+    fn naked_single() {
         test_method(
             "401003050000605084895407136030060405900050300050001200240500007009000500500092000",
             Naked::Single,
@@ -137,7 +137,7 @@ mod tests {
     }
 
     #[test]
-    fn get_and_apply_pairs() {
+    fn naked_pairs() {
         test_method(
             "400000938032094100095300240370609004529001673604703090957008300003900400240030709",
             Naked::Pair,
@@ -179,7 +179,7 @@ mod tests {
     }
 
     #[test]
-    fn get_and_apply_triples() {
+    fn naked_triples() {
         test_method(
             "294513006600842319300697254000056000040080060000470000730164005900735001400928637",
             Naked::Triple,
@@ -213,7 +213,7 @@ mod tests {
     }
 
     #[test]
-    fn get_and_apply_quads() {
+    fn naked_quads() {
         test_method(
             "000030086000020040090078520371856294900142375400397618200703859039205467700904132",
             Naked::Quad,
