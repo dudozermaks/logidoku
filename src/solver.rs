@@ -70,6 +70,30 @@ impl Solver {
         applications
     }
 
+    /// Goes through all enabled methods (in order).
+    /// Applies the first applicable methods for the given grid.
+    /// If method returns multiple actions: applies them in method's order.
+    /// Returns [`Action`]s taken and grid (which might be unsloved).
+    pub fn try_solve(&self, grid: &mut Grid) -> Vec<Action> {
+        let mut steps_taken = vec![];
+
+        while !grid.is_solved() {
+            let actions = self.take_step(&grid, true);
+
+            if actions.is_empty() {
+                break;
+            }
+
+            for action in &actions {
+                action.apply_to_grid(grid);
+            }
+
+            steps_taken.extend(actions);
+        }
+
+        steps_taken
+    }
+
     /// Returns methods and bool, indicating whether given method is enabled.
     pub fn methods(&self) -> &Vec<(Box<dyn Method>, bool)> {
         &self.methods
@@ -194,5 +218,13 @@ mod tests {
 
             assert_eq!(actions, vec![]);
         }
+    }
+
+    #[test]
+    fn try_solve() {
+        let mut grid = Grid::from_str("000004028406000005100030600000301000087000140000709000002010003900000507670400000").unwrap();
+        let actions = Solver::all_methods().try_solve(&mut grid);
+
+        assert_eq!(grid, Grid::from_str("735164928426978315198532674249381756387256149561749832852617493914823567673495281").unwrap());
     }
 }
