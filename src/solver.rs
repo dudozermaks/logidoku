@@ -56,7 +56,7 @@ impl Solver {
                 continue;
             }
 
-            let method_applications = method.get_all_helpful_applications(grid);
+            let method_applications = method.get_all_helpful_applications(grid, true);
 
             if !method_applications.is_empty() {
                 applications.extend(method_applications);

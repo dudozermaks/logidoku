@@ -17,8 +17,16 @@ use crate::{action::Action, grid::Grid};
 /// for the given method.
 pub trait Method: Display + DynClone + Debug {
     fn get_all_applications(&self, grid: &Grid) -> Vec<Action>;
-    fn get_all_helpful_applications(&self, grid: &Grid) -> Vec<Action> {
-        self.get_all_applications(grid)
+    fn get_all_helpful_applications(&self, grid: &Grid, simplify: bool) -> Vec<Action> {
+        let mut applications = self.get_all_applications(grid);
+
+        if simplify {
+            applications
+                .iter_mut()
+                .for_each(|method| method.simplify(grid));
+        }
+
+        applications
             .iter()
             .filter(|method| method.is_helpful(grid))
             .cloned()
