@@ -91,21 +91,23 @@ impl Action {
 
     /// Removes unnecessary positions from figure
     pub fn simplify(&mut self, grid: &crate::grid::Grid) {
-        let simplify_pencilmarks = |figure: &mut Figure, pencilmarks: &Vec<u8>, remove: bool| -> Figure {
-            figure
-                .clone()
-                .into_iter()
-                .filter(|pos| {
-                    if let Cell::Pencilmarks(p) = &grid[*pos] {
-                        p.iter()
-                            .any(|cell_pencilmark| pencilmarks.contains(cell_pencilmark) == remove)
-                    } else {
-                        false
-                    }
-                })
-                .collect::<Vec<_>>()
-                .into()
-        };
+        let simplify_pencilmarks =
+            |figure: &mut Figure, pencilmarks: &Vec<u8>| -> Figure {
+                figure
+                    .clone()
+                    .into_iter()
+                    .filter(|pos| {
+                        if let Cell::Pencilmarks(p) = &grid[*pos] {
+                            p.iter().any(|cell_pencilmark| {
+                                pencilmarks.contains(cell_pencilmark)
+                            })
+                        } else {
+                            false
+                        }
+                    })
+                    .collect::<Vec<_>>()
+                    .into()
+            };
 
         match self {
             // can't simplify this
@@ -117,13 +119,13 @@ impl Action {
                 figure,
                 pencilmarks,
             } => {
-                *figure = simplify_pencilmarks(figure, &pencilmarks, true);
+                *figure = simplify_pencilmarks(figure, &pencilmarks);
             }
             Action::PreservePencilmarks {
                 figure,
                 pencilmarks,
             } => {
-                *figure = simplify_pencilmarks(figure, &pencilmarks, false);
+                *figure = simplify_pencilmarks(figure, &pencilmarks);
             }
         }
     }
@@ -248,5 +250,51 @@ mod tests {
             };
             assert!(preserve.is_helpful(&grid));
         }
+    }
+    #[test]
+    fn simplify() {
+        let grid = Grid::from_str(
+            "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
+        )
+        .unwrap();
+
+        let mut place = Action::PlaceNumber {
+            position: 0,
+            number: 7,
+        };
+        place.simplify(&grid);
+        assert_eq!(
+            place,
+            Action::PlaceNumber {
+                position: 0,
+                number: 7
+            }
+        );
+
+        let mut remove = Action::RemovePencilmarks {
+            figure: vec![1, 2, 3, 4, 5, 6, 7, 8].into(),
+            pencilmarks: vec![7],
+        };
+        remove.simplify(&grid);
+        assert_eq!(
+            remove,
+            Action::RemovePencilmarks {
+                figure: vec![4, 6].into(),
+                pencilmarks: vec![7]
+            }
+        );
+
+        let mut preserve = Action::PreservePencilmarks {
+            figure: vec![0, 1, 2, 9, 10, 11, 18, 19, 20].into(),
+            pencilmarks: vec![7],
+        };
+        preserve.simplify(&grid);
+        assert_eq!(
+            preserve,
+            Action::PreservePencilmarks {
+                figure: vec![0].into(),
+                pencilmarks: vec![7]
+            }
+        );
     }
 }
