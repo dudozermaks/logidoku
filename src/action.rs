@@ -1,6 +1,6 @@
 use crate::{cell::Cell, figure::Figure};
 
-#[derive(Ord, Eq, PartialEq, PartialOrd, Debug, Clone)]
+#[derive(Ord, Eq, PartialEq, PartialOrd, Debug, Clone, Hash)]
 pub enum Action {
     PlaceNumber {
         position: usize,

@@ -1,4 +1,7 @@
-use std::{collections::HashSet, fmt::Display};
+use std::{
+    collections::{BTreeSet, HashSet},
+    fmt::Display,
+};
 
 use itertools::Itertools;
 
@@ -200,8 +203,8 @@ impl Display for SimpleColoring {
 }
 
 impl Method for SimpleColoring {
-    fn get_all_applications(&self, grid: &Grid) -> Vec<crate::action::Action> {
-        let mut res = vec![];
+    fn get_all_applications(&self, grid: &Grid) -> BTreeSet<Action> {
+        let mut res = BTreeSet::new();
 
         let mut chains: Vec<Vec<ChainLink>> = vec![];
 
@@ -223,11 +226,11 @@ impl Method for SimpleColoring {
                 let rule4 = link1.rule4(link2);
 
                 if let Some(rule2) = rule2 {
-                    res.push(rule2);
+                    res.insert(rule2);
                 }
 
                 if let Some(rule4) = rule4 {
-                    res.push(rule4);
+                    res.insert(rule4);
                 }
             }
         }
@@ -242,12 +245,10 @@ mod tests {
 
     use super::*;
 
-    fn test(grid: &str, mut predictions: Vec<Action>) {
+    fn test(grid: &str, predictions: BTreeSet<Action>) {
         let grid = Grid::from_str(grid).unwrap();
 
-        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid, false);
-        actions.sort();
-        predictions.sort();
+        let actions = SimpleColoring {}.get_all_helpful_applications(&grid, false);
 
         assert_eq!(actions, predictions);
     }
@@ -256,7 +257,7 @@ mod tests {
     fn singles_chains() {
         test(
             "200041056405602010016095004350129640142060590069504001584216379920408165601950482",
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![4, 13, 22, 30, 39, 48].into(),
                     pencilmarks: vec![3],
@@ -273,12 +274,12 @@ mod tests {
                     figure: vec![26, 39].into(),
                     pencilmarks: vec![3],
                 },
-            ],
+            ]),
         );
 
         test(
             "400100000002000004008090100006403800080000010007906200003070000200000605000002001",
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![4, 13, 22, 30, 32, 39, 40, 41, 48, 50, 58, 67, 76].into(),
                     pencilmarks: vec![1],
@@ -307,7 +308,7 @@ mod tests {
                     figure: vec![30, 31, 32, 36, 37, 38, 41, 42, 43, 44, 48, 49, 50].into(),
                     pencilmarks: vec![2],
                 },
-            ],
+            ]),
         );
 
         let mut grid = Grid::from_str(
@@ -320,10 +321,9 @@ mod tests {
         grid.set_pencilmarks(49, vec![3, 8]);
         grid.set_pencilmarks(44, vec![3, 8]);
 
-        let mut actions = SimpleColoring {}.get_all_helpful_applications(&grid, false);
-        actions.sort();
+        let actions = SimpleColoring {}.get_all_helpful_applications(&grid, false);
 
-        let mut predictions = vec![
+        let predictions = BTreeSet::from([
             Action::RemovePencilmarks {
                 figure: vec![26, 39].into(),
                 pencilmarks: vec![3],
@@ -369,8 +369,7 @@ mod tests {
                 figure: vec![17, 40].into(),
                 pencilmarks: vec![8],
             },
-        ];
-        predictions.sort();
+        ]);
 
         assert_eq!(actions, predictions);
     }

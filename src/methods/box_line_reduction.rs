@@ -1,6 +1,6 @@
-use std::fmt::Display;
+use std::{collections::BTreeSet, fmt::Display};
 
-use crate::{action::Action, figure::Figure};
+use crate::{action::Action, figure::Figure, grid::Grid};
 
 use super::Method;
 
@@ -11,13 +11,8 @@ pub enum BoxLineReduction {
 }
 
 impl BoxLineReduction {
-    fn find_in_figure(
-        &self,
-        grid: &crate::grid::Grid,
-        figure: &Figure,
-        dimension: usize,
-    ) -> Vec<crate::action::Action> {
-        let mut res = vec![];
+    fn find_in_figure(&self, grid: &Grid, figure: &Figure, dimension: usize) -> BTreeSet<Action> {
+        let mut res = BTreeSet::new();
         let pencilmarks_info = grid.pencilmarks_info(figure.clone());
 
         for (pencilmark, positions) in pencilmarks_info {
@@ -25,10 +20,10 @@ impl BoxLineReduction {
                 let pencilmarks_figure: Figure = positions.into();
 
                 if let Some(sqr) = pencilmarks_figure.is_on_the_same_sqr() {
-                    res.push(Action::RemovePencilmarks {
+                    res.insert(Action::RemovePencilmarks {
                         figure: Figure::sqr(sqr) - pencilmarks_figure,
                         pencilmarks: vec![pencilmark],
-                    })
+                    });
                 }
             }
         }
@@ -51,8 +46,8 @@ impl Display for BoxLineReduction {
 }
 
 impl Method for BoxLineReduction {
-    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<crate::action::Action> {
-        let mut res = vec![];
+    fn get_all_applications(&self, grid: &Grid) -> BTreeSet<Action> {
+        let mut res = BTreeSet::new();
         let dimension = match self {
             BoxLineReduction::Pair => 2,
             BoxLineReduction::Triple => 3,
@@ -78,7 +73,7 @@ mod tests {
         test_method(
             "016007803090800000870001260048000300650009082039000650060900020080002936924600510",
             BoxLineReduction::Pair,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![1, 2, 10, 11, 18, 19, 20].into(),
                     pencilmarks: vec![4],
@@ -131,7 +126,7 @@ mod tests {
                     figure: vec![60, 61, 69, 70, 71, 78, 79].into(),
                     pencilmarks: vec![8],
                 },
-            ],
+            ]),
         );
     }
     #[test]
@@ -139,7 +134,7 @@ mod tests {
         test_method(
             "020943715904000600750000040500480000200000453400352000042000081005004260090208504",
             BoxLineReduction::Triple,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![3, 4, 5, 21, 22, 23].into(),
                     pencilmarks: vec![7],
@@ -164,7 +159,7 @@ mod tests {
                     figure: vec![66, 67, 68, 75, 76, 77].into(),
                     pencilmarks: vec![7],
                 },
-            ],
+            ]),
         );
     }
 }

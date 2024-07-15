@@ -3,7 +3,7 @@ use std::{
     fmt::Display,
 };
 
-use crate::{action::Action, figure::Figure};
+use crate::{action::Action, figure::Figure, grid::Grid};
 
 use super::Method;
 
@@ -16,7 +16,7 @@ pub enum Hidden {
 }
 
 impl Hidden {
-    fn single_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
+    fn single_applications(&self, grid: &Grid) -> BTreeSet<Action> {
         let mut res = BTreeSet::new();
 
         for f in Figure::all_figures() {
@@ -37,9 +37,9 @@ impl Hidden {
                 });
         }
 
-        res.into_iter().collect()
+        res
     }
-    fn multiple_applications(&self, grid: &crate::grid::Grid, dimension: usize) -> Vec<Action> {
+    fn multiple_applications(&self, grid: &Grid, dimension: usize) -> BTreeSet<Action> {
         // BTreeSet: Candidates can repeat multiple times across the field
         let mut res = BTreeSet::new();
 
@@ -76,7 +76,7 @@ impl Hidden {
             }
         }
 
-        res.into_iter().collect()
+        res
     }
 }
 
@@ -96,7 +96,7 @@ impl Display for Hidden {
 }
 
 impl Method for Hidden {
-    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
+    fn get_all_applications(&self, grid: &Grid) -> BTreeSet<Action> {
         let dimension = match self {
             Hidden::Single => 1,
             Hidden::Pair => 2,
@@ -115,6 +115,8 @@ impl Method for Hidden {
 #[cfg(test)]
 mod tests {
 
+    use std::collections::BTreeSet;
+
     use crate::{
         action::Action,
         methods::{hidden_n::Hidden, test_method},
@@ -125,7 +127,7 @@ mod tests {
         test_method(
             "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
             Hidden::Single,
-            vec![
+            BTreeSet::from([
                 Action::PlaceNumber {
                     position: 0,
                     number: 7,
@@ -170,7 +172,7 @@ mod tests {
                     position: 80,
                     number: 1,
                 },
-            ],
+            ]),
         );
     }
 
@@ -179,7 +181,7 @@ mod tests {
         test_method(
             "720408030080000047401076802810739000000851000000264080209680413340000008168943275",
             Hidden::Pair,
-            vec![
+            BTreeSet::from([
                 Action::PreservePencilmarks {
                     figure: vec![29, 38].into(),
                     pencilmarks: vec![2, 4],
@@ -200,7 +202,7 @@ mod tests {
                     figure: vec![69, 70].into(),
                     pencilmarks: vec![6, 9],
                 },
-            ],
+            ]),
         );
     }
 
@@ -209,7 +211,7 @@ mod tests {
         test_method(
             "000001030231090000065003100678924300103050006000136700009360570006019843300000000",
             Hidden::Triple,
-            vec![
+            BTreeSet::from([
                 Action::PreservePencilmarks {
                     figure: vec![2, 47, 74].into(),
                     pencilmarks: vec![2, 4, 7],
@@ -230,7 +232,7 @@ mod tests {
                     figure: vec![63, 64, 66].into(),
                     pencilmarks: vec![2, 5, 7],
                 },
-            ],
+            ]),
         );
     }
     #[test]
@@ -238,7 +240,7 @@ mod tests {
         test_method(
             "901500046425090081860010020502000000019000460600000002196040253200060817000001694",
             Hidden::Quad,
-            vec![
+            BTreeSet::from([
                 Action::PreservePencilmarks {
                     figure: vec![1, 4, 5, 6].into(),
                     pencilmarks: vec![2, 3, 7, 8],
@@ -263,7 +265,7 @@ mod tests {
                     figure: vec![66, 68, 75, 76].into(),
                     pencilmarks: vec![2, 3, 5, 9],
                 },
-            ],
+            ]),
         )
     }
 }

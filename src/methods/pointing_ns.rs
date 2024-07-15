@@ -1,6 +1,6 @@
-use std::fmt::Display;
+use std::{fmt::Display, collections::BTreeSet};
 
-use crate::{action::Action, figure::Figure};
+use crate::{action::Action, figure::Figure, grid::Grid};
 
 use super::Method;
 
@@ -24,8 +24,8 @@ impl Display for Pointing {
 }
 
 impl Method for Pointing {
-    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<crate::action::Action> {
-        let mut res = vec![];
+    fn get_all_applications(&self, grid: &Grid) -> BTreeSet<Action> {
+        let mut res = BTreeSet::new();
         let dimension = match self {
             Pointing::Pair => 2,
             Pointing::Triple => 3,
@@ -53,7 +53,7 @@ impl Method for Pointing {
                     }
 
                     for figure_to_add in figures_to_add {
-                        res.push(Action::RemovePencilmarks {
+                        res.insert(Action::RemovePencilmarks {
                             figure: figure_to_add,
                             pencilmarks: vec![pencilmark],
                         });
@@ -77,7 +77,7 @@ mod tests {
         test_method(
             "032006100410000000000901000500090004060000071300020005000508000000000519057009860",
             Pointing::Pair,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![2, 11, 20, 38, 56, 65, 74].into(),
                     pencilmarks: vec![1],
@@ -126,7 +126,7 @@ mod tests {
                     figure: vec![7, 16, 25, 43, 61, 70, 79].into(),
                     pencilmarks: vec![8],
                 },
-            ],
+            ]),
         )
     }
     #[test]
@@ -134,7 +134,7 @@ mod tests {
         test_method(
             "930050000200630095856002000003180570005020980080005000000800159508210004000560008",
             Pointing::Triple,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![75, 76, 77, 78, 79, 80].into(),
                     pencilmarks: vec![1],
@@ -155,7 +155,7 @@ mod tests {
                     figure: vec![0, 1, 2, 3, 4, 5].into(),
                     pencilmarks: vec![6],
                 },
-            ],
+            ]),
         )
     }
 }

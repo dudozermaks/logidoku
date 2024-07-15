@@ -1,4 +1,4 @@
-use std::any::Any;
+use std::{any::Any, collections::BTreeSet};
 
 use crate::{
     action::Action,
@@ -49,8 +49,8 @@ impl Solver {
     /// Goes through all enabled methods (in order).
     /// If `stop_after_first` is true: returns Vec of helpful actions from every method.
     /// Else: returns helpful and simplified applications from the first applicable method.
-    pub fn take_step(&self, grid: &Grid, stop_after_first: bool) -> Vec<Action> {
-        let mut applications = vec![];
+    pub fn take_step(&self, grid: &Grid, stop_after_first: bool) -> BTreeSet<Action> {
+        let mut applications = BTreeSet::new();
         for (method, enabled) in &self.methods {
             if !enabled {
                 continue;
@@ -74,8 +74,8 @@ impl Solver {
     /// Applies the first applicable methods for the given grid.
     /// If method returns multiple actions: applies them in method's order.
     /// Returns [`Action`]s taken and grid (which might be unsloved).
-    pub fn try_solve(&self, grid: &mut Grid) -> Vec<Action> {
-        let mut steps_taken = vec![];
+    pub fn try_solve(&self, grid: &mut Grid) -> BTreeSet<Action> {
+        let mut steps_taken = BTreeSet::new();
 
         while !grid.is_solved() {
             let actions = self.take_step(&grid, true);
@@ -137,8 +137,8 @@ mod tests {
             )
             .unwrap();
 
-            let mut actions = solver.take_step(&easiest_grid, true);
-            let mut predictions = vec![
+            let actions = solver.take_step(&easiest_grid, true);
+            let predictions = BTreeSet::from([
                 Action::PlaceNumber {
                     position: 2,
                     number: 8,
@@ -155,10 +155,7 @@ mod tests {
                     position: 73,
                     number: 3,
                 },
-            ];
-
-            actions.sort();
-            predictions.sort();
+            ]);
 
             assert_eq!(actions, predictions);
         }
@@ -168,8 +165,8 @@ mod tests {
             )
             .unwrap();
 
-            let mut actions = solver.take_step(&multiple_actions_grid, false);
-            let mut predictions = vec![
+            let actions = solver.take_step(&multiple_actions_grid, false);
+            let predictions = BTreeSet::from([
                 Action::PlaceNumber {
                     position: 44,
                     number: 1,
@@ -179,29 +176,10 @@ mod tests {
                     pencilmarks: vec![6],
                 },
                 Action::RemovePencilmarks {
-                    figure: vec![7, 8].into(),
-                    pencilmarks: vec![6],
-                },
-                Action::RemovePencilmarks {
-                    figure: vec![7, 8].into(),
-                    pencilmarks: vec![6],
-                },
-                Action::RemovePencilmarks {
-                    figure: vec![7, 8].into(),
-                    pencilmarks: vec![6],
-                },
-                Action::RemovePencilmarks {
                     figure: vec![40, 41].into(),
                     pencilmarks: vec![1],
                 },
-                Action::RemovePencilmarks {
-                    figure: vec![40, 41].into(),
-                    pencilmarks: vec![1],
-                },
-            ];
-
-            actions.sort();
-            predictions.sort();
+            ]);
 
             assert_eq!(actions, predictions);
         }
@@ -216,15 +194,24 @@ mod tests {
 
             let actions = solver.take_step(&hard_grid, true);
 
-            assert_eq!(actions, vec![]);
+            assert_eq!(actions, BTreeSet::new());
         }
     }
 
     #[test]
     fn try_solve() {
-        let mut grid = Grid::from_str("000004028406000005100030600000301000087000140000709000002010003900000507670400000").unwrap();
-        let actions = Solver::all_methods().try_solve(&mut grid);
+        let mut grid = Grid::from_str(
+            "000004028406000005100030600000301000087000140000709000002010003900000507670400000",
+        )
+        .unwrap();
+        let _actions = Solver::all_methods().try_solve(&mut grid);
 
-        assert_eq!(grid, Grid::from_str("735164928426978315198532674249381756387256149561749832852617493914823567673495281").unwrap());
+        assert_eq!(
+            grid,
+            Grid::from_str(
+                "735164928426978315198532674249381756387256149561749832852617493914823567673495281"
+            )
+            .unwrap()
+        );
     }
 }

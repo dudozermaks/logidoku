@@ -1,7 +1,10 @@
 use itertools::Itertools;
-use std::{collections::HashMap, fmt::Display};
+use std::{
+    collections::{BTreeSet, HashMap},
+    fmt::Display,
+};
 
-use crate::{action::Action, figure::Figure};
+use crate::{action::Action, figure::Figure, grid::Grid};
 
 use super::Method;
 
@@ -60,8 +63,8 @@ pub enum Fishes {
 impl Fishes {
     /// If not rotated, search in columns.
     /// If rotated, change every row to column, and vise versa. Logic does not changes.
-    fn get_all_in_row_or_col(&self, grid: &crate::grid::Grid, rotated: bool) -> Vec<Action> {
-        let mut res = vec![];
+    fn get_all_in_row_or_col(&self, grid: &Grid, rotated: bool) -> BTreeSet<Action> {
+        let mut res = BTreeSet::new();
 
         let dimensions = match self {
             Fishes::XWing => 2,
@@ -122,7 +125,7 @@ impl Fishes {
                         figure -= candidate.figure.clone();
                     }
 
-                    res.push(Action::RemovePencilmarks {
+                    res.insert(Action::RemovePencilmarks {
                         figure,
                         pencilmarks: vec![number],
                     });
@@ -145,7 +148,7 @@ impl Display for Fishes {
 }
 
 impl Method for Fishes {
-    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
+    fn get_all_applications(&self, grid: &Grid) -> BTreeSet<Action> {
         let mut res = self.get_all_in_row_or_col(grid, false);
 
         res.append(&mut self.get_all_in_row_or_col(grid, true));
@@ -169,7 +172,7 @@ mod tests {
         test_method(
             "100000569492056108056109240009640801064010000218035604040500016905061402621000005",
             XWing {},
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![0, 1, 2, 4, 6, 7, 8, 72, 73, 74, 76, 78, 79, 80].into(),
                     pencilmarks: vec![4],
@@ -190,13 +193,13 @@ mod tests {
                     figure: vec![28, 29, 30, 31, 32, 33, 35, 37, 38, 39, 40, 41, 42, 44].into(),
                     pencilmarks: vec![5],
                 },
-            ],
+            ]),
         );
 
         test_method(
             "000000094760910050090002081070050010000709000080031067240100070010090045900000100",
             XWing {},
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![1, 3, 4, 5, 6, 7, 8, 37, 39, 40, 41, 42, 43, 44].into(),
                     pencilmarks: vec![1],
@@ -209,7 +212,7 @@ mod tests {
                     figure: vec![36, 37, 38, 39, 41, 42, 44, 72, 73, 74, 75, 77, 78, 80].into(),
                     pencilmarks: vec![2],
                 },
-            ],
+            ]),
         )
     }
 
@@ -218,31 +221,31 @@ mod tests {
         test_method(
             "529410703006003002003200000052300076637050200190627530300069420200830600960742305",
             Swordfish,
-            vec![Action::RemovePencilmarks {
+            BTreeSet::from([Action::RemovePencilmarks {
                 figure: vec![
                     10, 11, 12, 14, 16, 17, 19, 20, 21, 23, 25, 26, 28, 29, 30, 32, 34, 35,
                 ]
                 .into(),
                 pencilmarks: vec![8],
-            }],
+            }]),
         );
 
         test_method(
             "926000100537010420841000603259734816714060030368120040102000084485071360603000001",
             Swordfish,
-            vec![Action::RemovePencilmarks {
+            BTreeSet::from([Action::RemovePencilmarks {
                 figure: vec![
                     18, 19, 20, 21, 23, 24, 26, 54, 56, 57, 59, 60, 61, 62, 72, 74, 75, 77, 78, 80,
                 ]
                 .into(),
                 pencilmarks: vec![9],
-            }],
+            }]),
         );
 
         test_method(
             "020043069003896200960025030890560013600030000030081026300010070009674302270358090",
             Swordfish,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![
                         2, 3, 5, 11, 12, 14, 20, 21, 23, 30, 47, 48, 50, 56, 65, 66, 68, 74, 75, 77,
@@ -288,7 +291,7 @@ mod tests {
                     .into(),
                     pencilmarks: vec![9],
                 },
-            ],
+            ]),
         );
     }
 
@@ -313,11 +316,9 @@ mod tests {
 
         grid.set_pencilmarks(9, vec![1, 2, 4]);
 
-        let mut actions = Jellyfish.get_all_applications(&grid);
+        let actions = Jellyfish.get_all_applications(&grid);
 
-        actions.sort();
-
-        let mut assertion = vec![
+        let assertion = BTreeSet::from([
             Action::RemovePencilmarks {
                 figure: vec![
                     10, 11, 12, 13, 14, 16, 18, 19, 21, 22, 23, 24, 25, 45, 46, 47, 48, 49, 50, 52,
@@ -349,9 +350,7 @@ mod tests {
                 .into(),
                 pencilmarks: vec![4],
             },
-        ];
-
-        assertion.sort();
+        ]);
 
         assert_eq!(actions, assertion);
     }

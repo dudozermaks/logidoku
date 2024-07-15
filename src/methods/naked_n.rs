@@ -1,6 +1,9 @@
-use std::{collections::HashSet, fmt::Display};
+use std::{
+    collections::{BTreeSet, HashSet},
+    fmt::Display,
+};
 
-use crate::{action::Action, cell::Cell, figure::Figure};
+use crate::{action::Action, cell::Cell, figure::Figure, grid::Grid};
 
 use super::Method;
 
@@ -13,24 +16,25 @@ pub enum Naked {
 }
 
 impl Naked {
-    fn single_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
-        let mut res = vec![];
+    fn single_applications(&self, grid: &Grid) -> BTreeSet<Action> {
+        let mut res = BTreeSet::new();
 
         for i in Figure::all_cells() {
             if let Cell::Pencilmarks(pencilmarks) = &grid[i] {
                 if pencilmarks.len() == 1 {
-                    res.push(Action::PlaceNumber {
+                    res.insert(Action::PlaceNumber {
                         position: i,
                         number: pencilmarks[0],
-                    })
+                    });
                 }
             }
         }
 
         res
     }
-    fn multiple_applications(&self, grid: &crate::grid::Grid, dimension: usize) -> Vec<Action> {
-        let mut res = vec![];
+
+    fn multiple_applications(&self, grid: &Grid, dimension: usize) -> BTreeSet<Action> {
+        let mut res = BTreeSet::new();
 
         for f in Figure::all_figures() {
             let mut candidates = vec![];
@@ -60,7 +64,7 @@ impl Naked {
                 }
 
                 if possible_positions.len() == dimension {
-                    res.push(Action::RemovePencilmarks {
+                    res.insert(Action::RemovePencilmarks {
                         figure: f.clone() - possible_positions.clone().into(),
                         pencilmarks: lead_set.to_vec(),
                     });
@@ -87,7 +91,7 @@ impl Display for Naked {
 }
 
 impl Method for Naked {
-    fn get_all_applications(&self, grid: &crate::grid::Grid) -> Vec<Action> {
+    fn get_all_applications(&self, grid: &Grid) -> BTreeSet<Action> {
         let dimension = match self {
             Naked::Single => 1,
             Naked::Pair => 2,
@@ -114,16 +118,16 @@ mod tests {
         test_method(
             "401003050000605084895407136030060405900050300050001200240500007009000500500092000",
             Naked::Single,
-            vec![Action::PlaceNumber {
+            BTreeSet::from([Action::PlaceNumber {
                 position: 22,
                 number: 2,
-            }],
+            }]),
         );
 
         test_method(
             "401003050000605084895427136030060405900050300050001200240500007009000500500092000",
             Naked::Single,
-            vec![
+            BTreeSet::from([
                 Action::PlaceNumber {
                     position: 4,
                     number: 8,
@@ -132,7 +136,7 @@ mod tests {
                     position: 13,
                     number: 1,
                 },
-            ],
+            ]),
         );
     }
 
@@ -141,7 +145,7 @@ mod tests {
         test_method(
             "400000938032094100095300240370609004529001673604703090957008300003900400240030709",
             Naked::Pair,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![0, 3, 4, 5, 6, 7, 8].into(),
                     pencilmarks: vec![1, 6],
@@ -174,7 +178,7 @@ mod tests {
                     figure: vec![6, 15, 24, 42, 60, 69, 78].into(),
                     pencilmarks: vec![5, 8],
                 },
-            ],
+            ]),
         );
     }
 
@@ -183,7 +187,7 @@ mod tests {
         test_method(
             "294513006600842319300697254000056000040080060000470000730164005900735001400928637",
             Naked::Triple,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![0, 9, 18, 54, 63, 72].into(),
                     pencilmarks: vec![1, 5, 8],
@@ -208,7 +212,7 @@ mod tests {
                     figure: vec![8, 17, 26, 62, 71, 80].into(),
                     pencilmarks: vec![2, 3, 8],
                 },
-            ],
+            ]),
         );
     }
 
@@ -217,7 +221,7 @@ mod tests {
         test_method(
             "000030086000020040090078520371856294900142375400397618200703859039205467700904132",
             Naked::Quad,
-            vec![
+            BTreeSet::from([
                 Action::RemovePencilmarks {
                     figure: vec![27, 36, 45, 54, 72].into(),
                     pencilmarks: vec![1, 5, 6, 8],
@@ -226,7 +230,7 @@ mod tests {
                     figure: vec![1, 2, 11, 19, 20].into(),
                     pencilmarks: vec![1, 5, 6, 8],
                 },
-            ],
+            ]),
         );
     }
 }
