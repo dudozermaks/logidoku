@@ -145,7 +145,7 @@ impl ChainLink {
 
         let intersection = info1.neighbours.intersection(info2.neighbours);
 
-        if intersection.len() == 0 {
+        if intersection.is_empty() {
             return None;
         }
 

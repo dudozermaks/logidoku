@@ -78,7 +78,7 @@ impl Solver {
         let mut steps_taken = BTreeSet::new();
 
         while !grid.is_solved() {
-            let actions = self.take_step(&grid, true);
+            let actions = self.take_step(grid, true);
 
             if actions.is_empty() {
                 break;

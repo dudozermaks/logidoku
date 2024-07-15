@@ -119,13 +119,13 @@ impl Action {
                 figure,
                 pencilmarks,
             } => {
-                *figure = simplify_pencilmarks(figure, &pencilmarks);
+                *figure = simplify_pencilmarks(figure, pencilmarks);
             }
             Action::PreservePencilmarks {
                 figure,
                 pencilmarks,
             } => {
-                *figure = simplify_pencilmarks(figure, &pencilmarks);
+                *figure = simplify_pencilmarks(figure, pencilmarks);
             }
         }
     }
