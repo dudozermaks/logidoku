@@ -34,6 +34,7 @@ impl From<usize> for PosInfo {
     }
 }
 
+#[allow(clippy::derived_hash_with_manual_eq)]
 #[derive(Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 struct ChainLink {
     number: u8,
