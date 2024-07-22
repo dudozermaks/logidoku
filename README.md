@@ -1,3 +1,4 @@
+# ⚠️**WIP!!!**
 # 🔢 LogiDoku: A Sudoku library
 LogiDoku is a Rust library for solving and grading Sudoku puzzles using **logical methods**. It is designed to mimic the way a human would solve a Sudoku puzzle, using techniques such as **Naked Singles**, **Hidden Singles**, and other logical deductions, listed below.
 
