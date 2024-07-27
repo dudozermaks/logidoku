@@ -9,7 +9,7 @@ assert_eq!(2+2, 4);
 ```
 
 ## 📋 Available methods
-You can find description for all methods, used in this solver at sudokuwiki.org.
+You can find description for all methods, used in this solver at https://sudokuwiki.org.
 Here is the list of currently supported methods:
 
 1. Naked Single/Pair/Triple/Quad
@@ -20,3 +20,8 @@ Here is the list of currently supported methods:
 1. Simple Coloring
 
 In total (counting every variation of every method) LogiDoku can use **16** methods.
+
+### ℹ️ Sources
+
+- https://sudokuwiki.org - Methods description, rating techniques
+- https://tn1ck.com/blog/how-to-generate-sudokus - Inspirations for rating system
